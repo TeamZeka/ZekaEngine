@@ -24,6 +24,7 @@ public:
   int GetWidth() const;
   int GetHeight() const;
   const char* GetName() const;
+  bool IsCreated() const;
 protected:
   void OnWindowClosed();
   void OnWindowResized(int width, int height);
@@ -40,6 +41,7 @@ protected:
   const char* m_Name;
   EventHandler& m_EventHandler;
   GraphicsContext* m_GraphicsContext;
+  bool m_Created = false;
 };
 
 Window* NewWindow(const char* name, int width, int height, EventHandler& handler);

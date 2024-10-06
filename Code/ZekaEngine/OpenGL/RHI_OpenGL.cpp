@@ -1,4 +1,5 @@
 #include "RHI_OpenGL.h"
+#include "ZekaEngine/Platform.h"
 
 ZK_NAMESPACE_BEGIN
 
@@ -133,6 +134,26 @@ Shader_OpenGL::Shader_OpenGL(const char* source, ShaderType type)
   m_Shader = glCreateShader(gl_type);
   glShaderSource(m_Shader, 1, &source, NULL);
   glCompileShader(m_Shader);
+
+  GLint shaderCompiled = 0;
+  glGetShaderiv(m_Shader, GL_COMPILE_STATUS, &shaderCompiled);
+
+  if (!shaderCompiled)
+  {
+    GLint infoLength = 0;
+    glGetShaderiv(m_Shader, GL_INFO_LOG_LENGTH, &infoLength);
+
+    if (infoLength)
+    {
+      auto *infoLog = new GLchar[infoLength];
+      glGetShaderInfoLog(m_Shader, infoLength, nullptr, infoLog);
+      Platform::Log(Platform::LogLevel::Error, infoLog);
+      delete[] infoLog;
+    }
+
+    glDeleteShader(m_Shader);
+    m_Shader = 0;
+  }
 }
 
 Shader_OpenGL::~Shader_OpenGL()
@@ -162,9 +183,9 @@ void Pipeline_OpenGL::PrepareVertexDecl()
   {
     const auto element = m_Desc.VertexDecl.Elements[i];
 
-    glEnableVertexAttribArray(i);
     glVertexAttribPointer(i, element.Count, GetRHIFormatOpenGLType(element.Format), 
       GL_FALSE, m_Desc.VertexDecl.Stride, (const void*)element.Offset);
+    glEnableVertexAttribArray(i);
   }
 }
 
@@ -186,6 +207,24 @@ void Pipeline_OpenGL::PrepareShaderProgram()
   }
 
   glLinkProgram(m_ShaderProgram);
+
+  GLint linkStatus = GL_FALSE;
+  glGetProgramiv(m_ShaderProgram, GL_LINK_STATUS, &linkStatus);
+  if (linkStatus != GL_TRUE)
+  {
+    GLint logLength = 0;
+    glGetProgramiv(m_ShaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+
+    if (logLength)
+    {
+      GLchar *log = new GLchar[logLength];
+      glGetProgramInfoLog(m_ShaderProgram, logLength, nullptr, log);
+      Platform::Log(Platform::LogLevel::Error, log);
+      delete[] log;
+    }
+
+    glDeleteProgram(m_ShaderProgram);
+  }
 
   if (vs)
   {

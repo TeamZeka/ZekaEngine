@@ -146,7 +146,10 @@ void AndroidWindow::HandleCmd(int32_t cmd)
     m_Width = ANativeWindow_getWidth(m_pApp->window);
     m_Height = ANativeWindow_getHeight(m_pApp->window);
 
-    Engine::Get()->GetWindow()->InitializeGraphics();
+    Window::InitializeGraphics();
+    Engine::Get()->OnWindowCreated();
+
+    m_Created = true;
   } break;
   case APP_CMD_WINDOW_RESIZED:
   {
@@ -160,7 +163,7 @@ void AndroidWindow::HandleCmd(int32_t cmd)
   } break;
   case APP_CMD_TERM_WINDOW:
   {
-    Engine::Get()->GetWindow()->ShutdownGraphics();
+    Window::ShutdownGraphics();
     ANativeWindow_release(m_pApp->window);
   } break;
   }

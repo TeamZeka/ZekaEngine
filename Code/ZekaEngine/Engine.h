@@ -18,6 +18,8 @@ public:
   Window* GetWindow();
   RenderDevice* GetRenderDevice();
 
+  void OnWindowCreated();
+
   void Run();
 
   static Engine* Get();

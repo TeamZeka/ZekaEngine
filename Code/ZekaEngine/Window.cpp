@@ -27,7 +27,10 @@ void Window::ShutdownGraphics()
 
 void Window::PresentGraphics()
 {
-  m_GraphicsContext->Present();
+  if (m_Created)
+  {
+    m_GraphicsContext->Present();
+  }
 }
 
 GraphicsContext* Window::GetGraphicsContext()
@@ -48,6 +51,11 @@ int Window::GetHeight() const
 const char* Window::GetName() const
 {
   return m_Name;
+}
+
+bool Window::IsCreated() const
+{
+  return m_Created;
 }
 
 void Window::OnWindowClosed()

@@ -42,9 +42,11 @@ void Engine::Run()
 
   const auto appCreateParams = m_Application->GetParams();
   m_Window = NewWindow(appCreateParams.Name, appCreateParams.Width, appCreateParams.Height, m_EventHandler);
-  m_RenderDevice = CreateRenderDevice(m_Window->GetGraphicsContext());
+  if (m_Window->IsCreated())
+  {
+    OnWindowCreated();
+  }
 
-  m_Application->OnInitialize();
   while (!m_Window->DestroyRequested())
   {
     m_Timer.Now = Time::Now();
@@ -56,6 +58,13 @@ void Engine::Run()
     m_Window->PollEvents();
     m_Window->PresentGraphics();
   }
+}
+
+void Engine::OnWindowCreated()
+{
+  m_RenderDevice = CreateRenderDevice(m_Window->GetGraphicsContext());
+
+  m_Application->OnInitialize();
 }
 
 Engine* Engine::Get()

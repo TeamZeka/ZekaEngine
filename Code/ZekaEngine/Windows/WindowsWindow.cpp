@@ -1,4 +1,5 @@
 #include "WindowsWindow.h"
+#include "WindowsEngine.h"
 
 ZK_NAMESPACE_BEGIN
 
@@ -140,6 +141,10 @@ LRESULT WindowsWindow::HandleMessages(UINT Msg, WPARAM wParam, LPARAM lParam)
       OnMouseButtonUp(MouseButton::XButton2);
     }
   } break;
+  case WM_CREATE:
+  {
+
+  } break;
   }
 
   return DefWindowProcW(m_hWnd, Msg, wParam, lParam);
@@ -167,7 +172,9 @@ bool WindowsWindow::DestroyRequested() const
 
 void WindowsWindow::Show()
 {
-  InitializeGraphics();
+  Window::InitializeGraphics();
+
+  m_Created = true;
 
   ShowWindow(m_hWnd, SW_SHOW);
   SetFocus(m_hWnd);
