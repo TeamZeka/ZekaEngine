@@ -21,7 +21,8 @@ namespace ClearFlags
 enum class BufferType : uint32
 {
   Index = 0,
-  Vertex
+  Vertex,
+  Uniform
 };
 
 enum class BufferFlags : uint32
@@ -280,10 +281,43 @@ struct VertexDecl
   uint32 Stride;
 };
 
+enum class CullMode : uint32
+{
+  Normal = 0,
+  Front,
+  Back
+};
+
+enum class BlendMode : uint32
+{
+  OneZero = 0,
+  ZeroSrcColor,
+  OneMinusSrcAlpha,
+  SrcAlphaOneMinusSrcAlpha,
+  SrcAlphaOne
+};
+
+enum class ComparisonFunc : uint32
+{
+  Never = 0,
+  Less,
+  Equal,
+  LessEqual,
+  Greater,
+  NotEqual,
+  GreaterEqual,
+  Always
+};
+
 struct PipelineDesc
 {
   Shader* VertexShader = nullptr;
   Shader* FragmentShader = nullptr;
+  bool BlendingEnable;
+  BlendMode BlendMode;
+  CullMode CullMode;
+  bool DepthEnable;
+  ComparisonFunc DepthFunc;
   VertexDecl VertexDecl;
 };
 
@@ -298,9 +332,81 @@ protected:
   PipelineDesc m_Desc;
 };
 
+enum class PixelFormat : uint32
+{
+  a8UnsignedNorm = 0,
+  r8UnsignedNorm,
+  r8SignedNorm,
+  r8UnsignedInt,
+  r8SignedInt,
+  r16UnsignedNorm,
+  r16SignedNorm,
+  r16UnsignedInt,
+  r16SignedInt,
+  r16Float,
+  r32UnsignedInt,
+  r32SignedInt,
+  r32Float,
+  rg8UnsignedNorm,
+  rg8SignedNorm,
+  rg8UnsignedInt,
+  rg8SignedInt,
+  rgba8UnsignedNorm,
+  rgba8UnsignedNormSRGB,
+  rgba8SignedNorm,
+  rgba8UnsignedInt,
+  rgba8SignedInt,
+  rgba16UnsignedNorm,
+  rgba16SignedNorm,
+  rgba16UnsignedInt,
+  rgba16SignedInt,
+  rgba16Float,
+  rgba32UnsignedInt,
+  rgba32SignedInt,
+  rgba32Float,
+  Depth,
+  DepthStencil
+};
+
+enum class TextureWrap : uint32
+{
+  Repeat = 0,
+  Clamp,
+  MirroredRepeat,
+  ClampToEdge,
+  ClampToBorder
+};
+
+enum class TextureFilter : uint32
+{
+  Linear = 0,
+  Nearest
+};
+
+class Texture
+{
+public:
+  Texture(PixelFormat format, uint32 width, uint32 height, const void* data) : m_PixelFormat(format), m_Width(width), m_Height(height) {}
+  ~Texture() {}
+  
+  virtual void SetMinFilter(TextureFilter filter) {}
+  virtual void SetMagFilter(TextureFilter filter) {}
+  virtual void SetWrapT(TextureWrap wrap) {}
+  virtual void SetWrapS(TextureWrap wrap) {}
+  virtual void SetWrapR(TextureWrap wrap) {}
+
+  PixelFormat GetPixelFormat() const { return m_PixelFormat; }
+  uint32 GetWidth() const { return m_Width; }
+  uint32 GetHeight() const { return m_Height; }
+protected:
+  PixelFormat m_PixelFormat;
+  uint32 m_Width;
+  uint32 m_Height;
+};
+
 enum class PrimitiveType : uint32
 {
-  TriangleList,
+  TriangleList = 0,
   LineList,
   PointList,
   TriangleStrip,
@@ -318,13 +424,16 @@ public:
   virtual void ClearColor(const Vector4& color) {}
   virtual void SetVertexBuffer(Buffer* buffer) {}
   virtual void SetIndexBuffer(Buffer* buffer) {}
+  virtual void SetUniformBuffer(Buffer* buffer, uint32 id) {}
   virtual void SetPipeline(Pipeline* pipeline) {}
+  virtual void SetTexture(Texture* texture, uint32 slot) {}
   virtual void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) {}
   virtual void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) {}
 
   virtual Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) { return nullptr; }
   virtual Shader* CreateShader(const char* source, ShaderType type) { return nullptr; }
   virtual Pipeline* CreatePipeline(const PipelineDesc& desc) { return nullptr; }
+  virtual Texture* CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data) { return nullptr; }
 };
 
 RenderDevice* CreateRenderDevice_OpenGL(GraphicsContext* context);

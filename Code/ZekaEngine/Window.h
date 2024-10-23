@@ -28,13 +28,16 @@ public:
 protected:
   void OnWindowClosed();
   void OnWindowResized(int width, int height);
+  void OnWindowMove(int x, int y);
   void OnKeyDown(KeyCode code);
   void OnKeyUp(KeyCode code);
   void OnMouseButtonDown(MouseButton button);
   void OnMouseButtonUp(MouseButton button);
-  void OnTouchDown(float x, float y, int32 pointerID);
-  void OnTouchUp(float x, float y, int32 pointerID);
-  void OnTouchMove(float x, float y, int32 pointerID);
+  void OnMouseMove(const Vector2& pos);
+  void OnMouseWheel(const Vector2& axis);
+  void OnTouchDown(const Vector2& pos, int32 pointerID);
+  void OnTouchUp(const Vector2& pos, int32 pointerID);
+  void OnTouchMove(const Vector2& pos, int32 pointerID);
 protected:
   int m_Width;
   int m_Height;

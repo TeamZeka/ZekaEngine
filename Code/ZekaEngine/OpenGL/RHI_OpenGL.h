@@ -46,6 +46,23 @@ private:
   GLuint m_ShaderProgram;
 };
 
+class Texture_OpenGL : public Texture
+{
+public:
+  Texture_OpenGL(PixelFormat format, uint32 width, uint32 height, const void* data);
+  ~Texture_OpenGL();
+
+  void SetMinFilter(TextureFilter filter) override;
+  void SetMagFilter(TextureFilter filter) override;
+  void SetWrapT(TextureWrap wrap) override;
+  void SetWrapS(TextureWrap wrap) override;
+  void SetWrapR(TextureWrap wrap) override;
+
+  GLuint GetTexture() const;
+private:
+  GLuint m_Texture;
+};
+
 class RenderDevice_OpenGL : public RenderDevice
 {
 public:
@@ -56,15 +73,20 @@ public:
   void ClearColor(const Vector4& color) override;
   void SetVertexBuffer(Buffer* buffer) override;
   void SetIndexBuffer(Buffer* buffer) override;
+  void SetUniformBuffer(Buffer* buffer, uint32 id) override;
   void SetPipeline(Pipeline* pipeline) override;
+  void SetTexture(Texture* texture, uint32 slot) override;
   void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) override;
   void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) override;
 
   Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) override;
   Shader* CreateShader(const char* source, ShaderType type) override;
   Pipeline* CreatePipeline(const PipelineDesc& desc) override;
+  Texture* CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data) override;
 private:
   GLuint m_VertexArray;
+
+  Pipeline_OpenGL* m_CurrentGLPipeline = nullptr;
 };
 
 ZK_NAMESPACE_END

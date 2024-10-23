@@ -72,6 +72,13 @@ void Window::OnWindowResized(int width, int height)
   m_EventHandler.CallEvent(event);
 }
 
+void Window::OnWindowMove(int x, int y)
+{
+  WindowMoveEvent event(x, y);
+
+  m_EventHandler.CallEvent(event);
+}
+
 void Window::OnKeyDown(KeyCode code)
 {
   KeyDownEvent event(code);
@@ -100,23 +107,37 @@ void Window::OnMouseButtonUp(MouseButton button)
   m_EventHandler.CallEvent(event);
 }
 
-void Window::OnTouchDown(float x, float y, int32 pointerID)
+void Window::OnMouseMove(const Vector2& pos)
 {
-  TouchDownEvent event(x, y, pointerID);
+  MouseMoveEvent event(pos);
 
   m_EventHandler.CallEvent(event);
 }
 
-void Window::OnTouchUp(float x, float y, int32 pointerID)
+void Window::OnMouseWheel(const Vector2& axis)
 {
-  TouchUpEvent event(x, y, pointerID);
+  MouseWheelEvent event(axis);
 
   m_EventHandler.CallEvent(event);
 }
 
-void Window::OnTouchMove(float x, float y, int32 pointerID)
+void Window::OnTouchDown(const Vector2& pos, int32 pointerID)
 {
-  TouchMoveEvent event(x, y, pointerID);
+  TouchDownEvent event(pos, pointerID);
+
+  m_EventHandler.CallEvent(event);
+}
+
+void Window::OnTouchUp(const Vector2& pos, int32 pointerID)
+{
+  TouchUpEvent event(pos, pointerID);
+
+  m_EventHandler.CallEvent(event);
+}
+
+void Window::OnTouchMove(const Vector2& pos, int32 pointerID)
+{
+  TouchMoveEvent event(pos, pointerID);
 
   m_EventHandler.CallEvent(event);
 }

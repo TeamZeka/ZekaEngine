@@ -15,6 +15,7 @@ public:
 
   void SetNativeApplication(android_app* app);
   android_app* GetNativeApplication();
+  AAssetManager* GetAssetManager();
 private:
   android_app* m_NativeApplication = nullptr;
 };

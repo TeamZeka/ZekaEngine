@@ -1,5 +1,6 @@
 #include "RHI_OpenGL.h"
 #include "ZekaEngine/Platform.h"
+#include "ZekaEngine/GLSLSourceGenerator.h"
 
 ZK_NAMESPACE_BEGIN
 
@@ -78,6 +79,211 @@ static uint32 GetOpenGLPrimitiveType(PrimitiveType type)
   return 0;
 }
 
+static uint32 GetOpenGLCullMode(CullMode mode)
+{
+  switch (mode)
+  {
+  case CullMode::Front: return GL_FRONT;
+  case CullMode::Back: return GL_BACK;
+  }
+}
+
+static GLenum GetOpenGLInternalPixelFormat(PixelFormat pixelFormat)
+{
+#if defined(ZK_OPENGLES_3_0) || defined(ZK_OPENGLES)
+  switch (pixelFormat)
+  {
+  case PixelFormat::a8UnsignedNorm: return GL_ALPHA8_OES;
+  case PixelFormat::r8UnsignedNorm: return GL_R8;
+  case PixelFormat::r8SignedNorm: return GL_R8_SNORM;
+  case PixelFormat::r8UnsignedInt: return GL_R8UI;
+  case PixelFormat::r8SignedInt: return GL_R8I;
+  case PixelFormat::r16UnsignedNorm: return GL_NONE;
+  case PixelFormat::r16SignedNorm: return GL_NONE;
+  case PixelFormat::r16UnsignedInt: return GL_R16UI;
+  case PixelFormat::r16SignedInt: return GL_R16I;
+  case PixelFormat::r16Float: return GL_R16F;
+  case PixelFormat::r32UnsignedInt: return GL_R32UI;
+  case PixelFormat::r32SignedInt: return GL_R32I;
+  case PixelFormat::r32Float: return GL_R32F;
+  case PixelFormat::rg8UnsignedNorm: return GL_RG8;
+  case PixelFormat::rg8SignedNorm: return GL_RG8_SNORM;
+  case PixelFormat::rg8UnsignedInt: return GL_RG8UI;
+  case PixelFormat::rg8SignedInt: return GL_RG8I;
+  case PixelFormat::rgba8UnsignedNorm: return GL_RGBA8;
+  case PixelFormat::rgba8UnsignedNormSRGB: return GL_SRGB8_ALPHA8;
+  case PixelFormat::rgba8SignedNorm: return GL_RGBA8_SNORM;
+  case PixelFormat::rgba8UnsignedInt: return GL_RGBA8UI;
+  case PixelFormat::rgba8SignedInt: return GL_RGBA8I;
+  case PixelFormat::rgba16UnsignedNorm: return GL_NONE;
+  case PixelFormat::rgba16SignedNorm: return GL_NONE;
+  case PixelFormat::rgba16UnsignedInt: return GL_RGBA16UI;
+  case PixelFormat::rgba16SignedInt: return GL_RGBA16I;
+  case PixelFormat::rgba16Float: return GL_RGBA16F;
+  case PixelFormat::rgba32UnsignedInt: return GL_RGBA32UI;
+  case PixelFormat::rgba32SignedInt: return GL_RGBA32I;
+  case PixelFormat::rgba32Float: return GL_RGBA32F;
+  case PixelFormat::Depth: return GL_DEPTH_COMPONENT24;
+  case PixelFormat::DepthStencil: return GL_DEPTH24_STENCIL8;
+  }
+#else
+  switch (pixelFormat)
+  {
+  case PixelFormat::a8UnsignedNorm: return GL_ALPHA8_EXT;
+  case PixelFormat::r8UnsignedNorm: return GL_R8;
+  case PixelFormat::r8SignedNorm: return GL_R8_SNORM;
+  case PixelFormat::r8UnsignedInt: return GL_R8UI;
+  case PixelFormat::r8SignedInt: return GL_R8I;
+  case PixelFormat::r16UnsignedNorm: return GL_R16;
+  case PixelFormat::r16SignedNorm: return GL_R16_SNORM;
+  case PixelFormat::r16UnsignedInt: return GL_R16UI;
+  case PixelFormat::r16SignedInt: return GL_R16I;
+  case PixelFormat::r16Float: return GL_R16F;
+  case PixelFormat::r32UnsignedInt: return GL_R32UI;
+  case PixelFormat::r32SignedInt: return GL_R32I;
+  case PixelFormat::r32Float: return GL_R32F;
+  case PixelFormat::rg8UnsignedNorm: return GL_RG8;
+  case PixelFormat::rg8SignedNorm: return GL_RG8_SNORM;
+  case PixelFormat::rg8UnsignedInt: return GL_RG8UI;
+  case PixelFormat::rg8SignedInt: return GL_RG8I;
+  case PixelFormat::rgba8UnsignedNorm: return GL_RGBA8;
+  case PixelFormat::rgba8UnsignedNormSRGB: return GL_SRGB8_ALPHA8;
+  case PixelFormat::rgba8SignedNorm: return GL_RGBA8_SNORM;
+  case PixelFormat::rgba8UnsignedInt: return GL_RGBA8UI;
+  case PixelFormat::rgba8SignedInt: return GL_RGBA8I;
+  case PixelFormat::rgba16UnsignedNorm: return GL_RGBA16;
+  case PixelFormat::rgba16SignedNorm: return GL_RGBA16_SNORM;
+  case PixelFormat::rgba16UnsignedInt: return GL_RGBA16UI;
+  case PixelFormat::rgba16SignedInt: return GL_RGBA16I;
+  case PixelFormat::rgba16Float: return GL_RGBA16F;
+  case PixelFormat::rgba32UnsignedInt: return GL_RGBA32UI;
+  case PixelFormat::rgba32SignedInt: return GL_RGBA32I;
+  case PixelFormat::rgba32Float: return GL_RGBA32F;
+  case PixelFormat::Depth: return GL_DEPTH_COMPONENT24;
+  case PixelFormat::DepthStencil: return GL_DEPTH24_STENCIL8;
+  }
+#endif
+
+  return 0;
+}
+
+static GLenum GetOpenGLPixelFormat(PixelFormat pixelFormat)
+{
+  switch (pixelFormat)
+  {
+  case PixelFormat::a8UnsignedNorm: return GL_ALPHA;
+  case PixelFormat::r8UnsignedNorm:
+  case PixelFormat::r8SignedNorm:
+  case PixelFormat::r16UnsignedNorm:
+  case PixelFormat::r16SignedNorm:
+  case PixelFormat::r16Float:
+  case PixelFormat::r32Float: return GL_RED;
+  case PixelFormat::r8UnsignedInt:
+  case PixelFormat::r8SignedInt:
+  case PixelFormat::r16UnsignedInt:
+  case PixelFormat::r16SignedInt:
+  case PixelFormat::r32UnsignedInt:
+  case PixelFormat::r32SignedInt: return GL_RED_INTEGER;
+  case PixelFormat::rg8UnsignedNorm:
+  case PixelFormat::rg8SignedNorm: return GL_RG;
+  case PixelFormat::rg8UnsignedInt:
+  case PixelFormat::rg8SignedInt: return GL_RG_INTEGER;
+  case PixelFormat::rgba8UnsignedNorm:
+  case PixelFormat::rgba8UnsignedNormSRGB:
+  case PixelFormat::rgba8SignedNorm:
+  case PixelFormat::rgba16UnsignedNorm:
+  case PixelFormat::rgba16SignedNorm:
+  case PixelFormat::rgba16Float:
+  case PixelFormat::rgba32Float: return GL_RGBA;
+  case PixelFormat::rgba8UnsignedInt:
+  case PixelFormat::rgba8SignedInt:
+  case PixelFormat::rgba16UnsignedInt:
+  case PixelFormat::rgba16SignedInt:
+  case PixelFormat::rgba32UnsignedInt:
+  case PixelFormat::rgba32SignedInt: return GL_RGBA_INTEGER;
+  case PixelFormat::Depth: return GL_DEPTH_COMPONENT;
+  case PixelFormat::DepthStencil: return GL_DEPTH_STENCIL;
+  }
+
+  return 0;
+}
+
+uint32 TextureWrapToGL(const TextureWrap wrap)
+{
+  switch (wrap)
+  {
+#ifndef ZK_PLATFORM_ANDROID
+  case TextureWrap::Clamp: return GL_CLAMP;
+  case TextureWrap::ClampToBorder: return GL_CLAMP_TO_BORDER;
+#else
+  case TextureWrap::Clamp: return GL_CLAMP_TO_EDGE;
+#endif
+  case TextureWrap::ClampToEdge: return GL_CLAMP_TO_EDGE;
+  case TextureWrap::Repeat: return GL_REPEAT;
+  case TextureWrap::MirroredRepeat: return GL_MIRRORED_REPEAT;
+  }
+
+  return 0;
+}
+
+static GLenum GetOpenGLPixelType(PixelFormat pixelFormat)
+{
+  switch (pixelFormat)
+  {
+  case PixelFormat::a8UnsignedNorm:
+  case PixelFormat::r8UnsignedNorm:
+  case PixelFormat::r16UnsignedNorm:
+  case PixelFormat::rg8UnsignedNorm:
+  case PixelFormat::rgba8UnsignedNorm:
+  case PixelFormat::rgba8UnsignedNormSRGB:
+  case PixelFormat::rgba16UnsignedNorm: return GL_UNSIGNED_BYTE;
+  case PixelFormat::r8SignedNorm:
+  case PixelFormat::r16SignedNorm:
+  case PixelFormat::rg8SignedNorm:
+  case PixelFormat::rgba8SignedNorm:
+  case PixelFormat::rgba16SignedNorm: return GL_BYTE;
+  case PixelFormat::r8UnsignedInt:
+  case PixelFormat::r16UnsignedInt:
+  case PixelFormat::r32UnsignedInt:
+  case PixelFormat::rg8UnsignedInt:
+  case PixelFormat::rgba8UnsignedInt:
+  case PixelFormat::rgba16UnsignedInt:
+  case PixelFormat::rgba32UnsignedInt: return GL_UNSIGNED_INT;
+  case PixelFormat::r8SignedInt:
+  case PixelFormat::r16SignedInt:
+  case PixelFormat::r32SignedInt:
+  case PixelFormat::rg8SignedInt:
+  case PixelFormat::rgba8SignedInt:
+  case PixelFormat::rgba16SignedInt:
+  case PixelFormat::rgba32SignedInt: return GL_INT;
+  case PixelFormat::r16Float:
+  case PixelFormat::r32Float:
+  case PixelFormat::rgba16Float:
+  case PixelFormat::rgba32Float:
+  case PixelFormat::Depth: return GL_UNSIGNED_INT;
+  case PixelFormat::DepthStencil: return GL_UNSIGNED_INT_24_8;
+  }
+
+  return 0;
+}
+
+static GLenum GetOpenGLComparisonFunc(ComparisonFunc func)
+{
+  switch (func)
+  {
+  case Zeka::ComparisonFunc::Never: return GL_NEVER;
+  case Zeka::ComparisonFunc::Less: return GL_LESS;
+  case Zeka::ComparisonFunc::Equal: return GL_EQUAL;
+  case Zeka::ComparisonFunc::LessEqual: return GL_LEQUAL;
+  case Zeka::ComparisonFunc::Greater: return GL_GREATER;
+  case Zeka::ComparisonFunc::NotEqual: return GL_NOTEQUAL;
+  case Zeka::ComparisonFunc::GreaterEqual: return GL_GEQUAL;
+  case Zeka::ComparisonFunc::Always: return GL_ALWAYS;
+  }
+
+  return 0;
+}
+
 Buffer_OpenGL::Buffer_OpenGL(BufferType type, const void* data, uint32 size, BufferFlags flags)
   : Buffer(type, data, size, flags)
 {
@@ -85,6 +291,7 @@ Buffer_OpenGL::Buffer_OpenGL(BufferType type, const void* data, uint32 size, Buf
   {
   case BufferType::Index: m_BufferType = GL_ELEMENT_ARRAY_BUFFER; break;
   case BufferType::Vertex: m_BufferType = GL_ARRAY_BUFFER; break;
+  case BufferType::Uniform: m_BufferType = GL_UNIFORM_BUFFER; break;
   }
 
   switch (flags)
@@ -131,8 +338,12 @@ Shader_OpenGL::Shader_OpenGL(const char* source, ShaderType type)
   case ShaderType::Fragment: gl_type = GL_FRAGMENT_SHADER; break;
   }
 
+  GLSLSourceGenerator sourceGen;
+  const std::string processedSource = sourceGen.GenerateSource(source);
+  const char* pSrc = processedSource.c_str();
+
   m_Shader = glCreateShader(gl_type);
-  glShaderSource(m_Shader, 1, &source, NULL);
+  glShaderSource(m_Shader, 1, &pSrc, NULL);
   glCompileShader(m_Shader);
 
   GLint shaderCompiled = 0;
@@ -242,14 +453,70 @@ GLuint Pipeline_OpenGL::GetShaderProgram() const
   return m_ShaderProgram;
 }
 
+Texture_OpenGL::Texture_OpenGL(PixelFormat format, uint32 width, uint32 height, const void* data)
+  : Texture(format, width, height, data)
+{
+  glGenTextures(1, &m_Texture);
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  
+  GLenum gl_format = GetOpenGLPixelFormat(format);
+  GLenum gl_internalFormat = GetOpenGLInternalPixelFormat(format);
+  
+  glTexImage2D(GL_TEXTURE_2D, 0, gl_internalFormat, width, height, 0, gl_format, GetOpenGLPixelType(format), data ? data : NULL);
+}
+
+Texture_OpenGL::~Texture_OpenGL()
+{
+  glDeleteTextures(1, &m_Texture);
+}
+
+void Texture_OpenGL::SetMinFilter(TextureFilter filter)
+{
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter == TextureFilter::Linear ? GL_LINEAR : GL_NEAREST);
+}
+
+void Texture_OpenGL::SetMagFilter(TextureFilter filter)
+{
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter == TextureFilter::Linear ? GL_LINEAR : GL_NEAREST);
+}
+
+void Texture_OpenGL::SetWrapT(TextureWrap wrap)
+{
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, TextureWrapToGL(wrap));
+}
+
+void Texture_OpenGL::SetWrapS(TextureWrap wrap)
+{
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TextureWrapToGL(wrap));
+}
+
+void Texture_OpenGL::SetWrapR(TextureWrap wrap)
+{
+  glBindTexture(GL_TEXTURE_2D, m_Texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, TextureWrapToGL(wrap));
+}
+
+GLuint Texture_OpenGL::GetTexture() const
+{
+  return m_Texture;
+}
+
 RenderDevice_OpenGL::RenderDevice_OpenGL()
 {
   glGenVertexArrays(1, &m_VertexArray);
   glBindVertexArray(m_VertexArray);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
 }
 
 RenderDevice_OpenGL::~RenderDevice_OpenGL()
 {
+  glDeleteVertexArrays(1, &m_VertexArray);
 }
 
 void RenderDevice_OpenGL::Clear(uint32 flags)
@@ -301,18 +568,100 @@ void RenderDevice_OpenGL::SetIndexBuffer(Buffer* buffer)
   }
 }
 
+void RenderDevice_OpenGL::SetUniformBuffer(Buffer* buffer, uint32 id)
+{
+  Buffer_OpenGL* gl_buffer = static_cast<Buffer_OpenGL*>(buffer);
+  if (gl_buffer)
+  {
+    glBindBufferBase(GL_UNIFORM_BUFFER, id, gl_buffer->GetBufferID());
+  }
+  else
+  {
+    glBindBufferBase(GL_UNIFORM_BUFFER, id, 0);
+  }
+}
+
 void RenderDevice_OpenGL::SetPipeline(Pipeline* pipeline)
 {
   Pipeline_OpenGL* gl_pp = static_cast<Pipeline_OpenGL*>(pipeline);
+  m_CurrentGLPipeline = gl_pp;
   if (gl_pp)
   {
+    const PipelineDesc desc = gl_pp->GetDesc();
+
     glUseProgram(gl_pp->GetShaderProgram());
 
     gl_pp->PrepareVertexDecl();
+    if (desc.BlendingEnable)
+    {
+      glEnable(GL_BLEND);
+      glBlendEquation(GL_FUNC_ADD);
+
+      const BlendMode blendMode = desc.BlendMode;
+      if (blendMode == BlendMode::SrcAlphaOneMinusSrcAlpha)
+      {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      }
+      else if (blendMode == BlendMode::ZeroSrcColor)
+      {
+        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+      }
+      else if (blendMode == BlendMode::OneZero)
+      {
+        glBlendFunc(GL_ONE, GL_ZERO);
+      }
+      else if (blendMode == BlendMode::OneMinusSrcAlpha)
+      {
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      }
+      else
+      {
+        glBlendFunc(GL_NONE, GL_NONE);
+      }
+    }
+    else
+    {
+      glDisable(GL_BLEND);
+    }
+
+    const CullMode cullMode = desc.CullMode;
+    if (cullMode != CullMode::Normal)
+    {
+      glEnable(GL_CULL_FACE);
+      glCullFace(GetOpenGLCullMode(cullMode));
+    }
+    else
+    {
+      glDisable(GL_CULL_FACE);
+    }
+
+    if (desc.DepthEnable)
+    {
+      glEnable(GL_DEPTH_TEST);
+      glDepthFunc(GetOpenGLComparisonFunc(desc.DepthFunc));
+    }
+    else
+    {
+      glDisable(GL_DEPTH_TEST);
+    }
   }
   else
   {
     glUseProgram(0);
+  }
+}
+
+void RenderDevice_OpenGL::SetTexture(Texture* texture, uint32 slot)
+{
+  Texture_OpenGL* gl_tex = static_cast<Texture_OpenGL*>(texture);
+  glActiveTexture(GL_TEXTURE0 + slot);
+  if (gl_tex)
+  {
+    glBindTexture(GL_TEXTURE_2D, gl_tex->GetTexture());
+  }
+  else
+  {
+    glBindTexture(GL_TEXTURE_2D, 0);
   }
 }
 
@@ -344,6 +693,11 @@ Shader* RenderDevice_OpenGL::CreateShader(const char* source, ShaderType type)
 Pipeline* RenderDevice_OpenGL::CreatePipeline(const PipelineDesc& desc)
 {
   return new Pipeline_OpenGL(desc);
+}
+
+Texture* RenderDevice_OpenGL::CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data)
+{
+  return new Texture_OpenGL(format, width, height, data);
 }
 
 RenderDevice* CreateRenderDevice_OpenGL(GraphicsContext* context)

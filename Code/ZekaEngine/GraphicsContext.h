@@ -11,9 +11,9 @@ public:
   GraphicsContext() : m_WindowHandle(nullptr) {}
   ~GraphicsContext() {}
 
-  virtual bool InitializeGraphics(void* windowHandle) { return false; }
-  virtual void ShutdownGraphics() {}
-  virtual void Present() {}
+  virtual bool InitializeGraphics(void* windowHandle) = 0;
+  virtual void ShutdownGraphics() = 0;
+  virtual void Present() = 0;
 
   void* GetWindowHandle() const { return m_WindowHandle; }
 protected:

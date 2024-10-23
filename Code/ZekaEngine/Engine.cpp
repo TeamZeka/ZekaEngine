@@ -1,5 +1,7 @@
 #include "Engine.h"
 #include "Time.h"
+#include "FontManager.h"
+#include "Audio.h"
 
 ZK_NAMESPACE_BEGIN
 
@@ -12,6 +14,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+  FontManager::Shutdown();
 }
 
 void Engine::SetApplication(Application* app)
@@ -54,7 +57,7 @@ void Engine::Run()
     m_Timer.LastTime = m_Timer.Now;
 
     m_Application->OnUpdate(m_Timer.DeltaTime);
-
+    AudioSourceManager::Update();
     m_Window->PollEvents();
     m_Window->PresentGraphics();
   }
@@ -63,6 +66,8 @@ void Engine::Run()
 void Engine::OnWindowCreated()
 {
   m_RenderDevice = CreateRenderDevice(m_Window->GetGraphicsContext());
+
+  FontManager::Initialize(m_RenderDevice);
 
   m_Application->OnInitialize();
 }

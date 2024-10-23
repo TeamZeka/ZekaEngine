@@ -5,14 +5,14 @@
 ZK_NAMESPACE_BEGIN
 
 Vector2::Vector2(const Vector3& vec)
-	: X(vec.X)
-	, Y(vec.Y)
+  : X(vec.X)
+  , Y(vec.Y)
 {
 }
 
 Vector2::Vector2(const Vector4& vec)
-	: X(vec.X)
-	, Y(vec.Y)
+  : X(vec.X)
+  , Y(vec.Y)
 {
 }
 

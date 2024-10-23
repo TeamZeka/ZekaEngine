@@ -20,4 +20,9 @@ android_app* AndroidEngine::GetNativeApplication()
   return m_NativeApplication;
 }
 
+AAssetManager* AndroidEngine::GetAssetManager()
+{
+  return m_NativeApplication->activity->assetManager;
+}
+
 ZK_NAMESPACE_END

@@ -141,9 +141,24 @@ LRESULT WindowsWindow::HandleMessages(UINT Msg, WPARAM wParam, LPARAM lParam)
       OnMouseButtonUp(MouseButton::XButton2);
     }
   } break;
-  case WM_CREATE:
+  case WM_MOUSEMOVE:
   {
+    OnMouseMove({ static_cast<float>((short)LOWORD(lParam)), static_cast<float>((short)HIWORD(lParam)) });
+  } break;
+  case WM_MOUSEWHEEL:
+  {
+    OnMouseWheel({ 0.0f, static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / 120.0f });
+  } break;
+  case WM_MOUSEHWHEEL:
+  {
+    OnMouseWheel({ -static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / 120.0f, 0.0f });
+  } break;
+  case WM_MOVE:
+  {
+    const int x = int(LOWORD(lParam));
+    const int y = int(HIWORD(lParam));
 
+    OnWindowMove(x, y);
   } break;
   }
 

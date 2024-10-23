@@ -6,6 +6,8 @@
 
 ZK_NAMESPACE_BEGIN
 
+class Application;
+
 struct ApplicationCreateParams
 {
   const char* Name;

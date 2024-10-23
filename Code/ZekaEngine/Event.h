@@ -1,7 +1,7 @@
 #ifndef _H_EVENT
 #define _H_EVENT
 
-#include "HelperDefines.h"
+#include "Vector2.h"
 #include "KeyCode.h"
 
 #include <functional>
@@ -13,10 +13,13 @@ enum class EventType : uint32
 {
   WindowClose = 0,
   WindowSize,
+  WindowMove,
   KeyDown,
   KeyUp,
   MouseButtonDown,
   MouseButtonUp,
+  MouseMove,
+  MouseWheel,
   TouchDown,
   TouchUp,
   TouchMove
@@ -67,6 +70,24 @@ struct WindowSizeEvent : public Event
 
   int Width;
   int Height;
+};
+
+struct WindowMoveEvent : public Event
+{
+  static EventType GetType()
+  {
+    return EventType::WindowMove;
+  }
+
+  WindowMoveEvent(int x, int y)
+    : Event(EventType::WindowMove)
+    , X(x)
+    , Y(y)
+  {
+  }
+
+  int X;
+  int Y;
 };
 
 struct KeyDownEvent : public Event
@@ -133,6 +154,38 @@ struct MouseButtonUpEvent : public Event
   MouseButton Button;
 };
 
+struct MouseMoveEvent : public Event
+{
+  static EventType GetType()
+  {
+    return EventType::MouseMove;
+  }
+
+  MouseMoveEvent(const Vector2& pos)
+    : Event(EventType::MouseMove)
+    , Position(pos)
+  {
+  }
+
+  Vector2 Position;
+};
+
+struct MouseWheelEvent : public Event
+{
+  static EventType GetType()
+  {
+    return EventType::MouseWheel;
+  }
+
+  MouseWheelEvent(const Vector2& axis)
+    : Event(EventType::MouseWheel)
+    , Axis(axis)
+  {
+  }
+
+  Vector2 Axis;
+};
+
 struct TouchDownEvent : public Event
 {
   static EventType GetType()
@@ -140,16 +193,14 @@ struct TouchDownEvent : public Event
     return EventType::TouchDown;
   }
 
-  TouchDownEvent(float x, float y, int32 pointerID)
+  TouchDownEvent(const Vector2& pos, int32 pointerID)
     : Event(EventType::TouchDown)
-    , X(x)
-    , Y(y)
+    , Position(pos)
     , PointerID(pointerID)
   {
   }
 
-  float X;
-  float Y;
+  Vector2 Position;
   int32 PointerID;
 };
 
@@ -160,16 +211,14 @@ struct TouchUpEvent : public Event
     return EventType::TouchUp;
   }
 
-  TouchUpEvent(float x, float y, int32 pointerID)
+  TouchUpEvent(const Vector2& pos, int32 pointerID)
     : Event(EventType::TouchUp)
-    , X(x)
-    , Y(y)
+    , Position(pos)
     , PointerID(pointerID)
   {
   }
 
-  float X;
-  float Y;
+  Vector2 Position;
   int32 PointerID;
 };
 
@@ -180,16 +229,14 @@ struct TouchMoveEvent : public Event
     return EventType::TouchMove;
   }
 
-    TouchMoveEvent(float x, float y, int32 pointerID)
+  TouchMoveEvent(const Vector2& pos, int32 pointerID)
     : Event(EventType::TouchMove)
-    , X(x)
-    , Y(y)
+    , Position(pos)
     , PointerID(pointerID)
   {
   }
 
-  float X;
-  float Y;
+  Vector2 Position;
   int32 PointerID;
 };
 

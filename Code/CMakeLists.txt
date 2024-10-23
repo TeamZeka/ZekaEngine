@@ -12,8 +12,14 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(THIRDPARTY_PATH ../ThirdParty)
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${THIRDPARTY_PATH}/stb
+  ${THIRDPARTY_PATH}/freetype
+  ${THIRDPARTY_PATH}/OpenAL
+  ${THIRDPARTY_PATH}/minimp3
 )
 
 if (WIN32)

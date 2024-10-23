@@ -186,7 +186,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
         const int32 pointerId = AMotionEvent_getPointerId(inputEvent, i);
         const float x = AMotionEvent_getX(inputEvent, i);
         const float y = AMotionEvent_getY(inputEvent, i);
-        OnTouchDown(x, y, pointerId);
+        OnTouchDown(Vector2(x, y), pointerId);
       }
     } break;
     case AMOTION_EVENT_ACTION_UP:
@@ -197,7 +197,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
         const int32 pointerId = AMotionEvent_getPointerId(inputEvent, i);
         const float x = AMotionEvent_getX(inputEvent, i);
         const float y = AMotionEvent_getY(inputEvent, i);
-        OnTouchUp(x, y, pointerId);
+        OnTouchUp(Vector2(x, y), pointerId);
       }
     } break;
     case AMOTION_EVENT_ACTION_MOVE:
@@ -208,7 +208,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
         const int32 pointerId = AMotionEvent_getPointerId(inputEvent, i);
         const float x = AMotionEvent_getX(inputEvent, i);
         const float y = AMotionEvent_getY(inputEvent, i);
-        OnTouchMove(x, y, pointerId);
+        OnTouchMove(Vector2(x, y), pointerId);
       }
     } break;
     case AMOTION_EVENT_ACTION_POINTER_DOWN:
@@ -217,7 +217,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
       const int32 pointerId = AMotionEvent_getPointerId(inputEvent, pointerIndex);
       const float x = AMotionEvent_getX(inputEvent, pointerIndex);
       const float y = AMotionEvent_getY(inputEvent, pointerIndex);
-      OnTouchDown(x, y, pointerId);
+      OnTouchDown(Vector2(x, y), pointerId);
     } break;
     case AMOTION_EVENT_ACTION_POINTER_UP:
     {
@@ -225,7 +225,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
       const int32 pointerId = AMotionEvent_getPointerId(inputEvent, pointerIndex);
       const float x = AMotionEvent_getX(inputEvent, pointerIndex);
       const float y = AMotionEvent_getY(inputEvent, pointerIndex);
-      OnTouchUp(x, y, pointerId);
+      OnTouchUp(Vector2(x, y), pointerId);
     } break;
     }
   } break;

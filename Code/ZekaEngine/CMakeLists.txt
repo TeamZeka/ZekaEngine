@@ -19,6 +19,9 @@ list(APPEND ZekaEngine_SOURCES "OpenGL/IncludeOpenGLHeaders.h")
 list(APPEND ZekaEngine_SOURCES "OpenGL/RHI_OpenGL.h")
 list(APPEND ZekaEngine_SOURCES "OpenGL/RHI_OpenGL.cpp")
 
+list(APPEND ZekaEngine_SOURCES "OpenAL/Audio_OpenAL.cpp")
+list(APPEND ZekaEngine_SOURCES "OpenAL/Audio_OpenAL.h")
+
 set(OpenGLLoader_SOURCES
   "OpenGL/OpenGLFunctions.h"
   "OpenGL/OpenGLLoader.h"
@@ -56,6 +59,8 @@ add_library(ZekaEngine
 
 if (ANDROID)
 
+set(ANDROID_BINARIES_DIR ../../Binaries/Android/ThirdParty/ARM64)
+
 target_link_libraries(ZekaEngine
 
   android
@@ -66,8 +71,12 @@ target_link_libraries(ZekaEngine
 
 elseif (WIN32)
 
+set(WINDOWS_BINARIES_DIR ../../Binaries/Windows/ThirdParty/x64)
+
 target_link_libraries(ZekaEngine
 
-  opengl32)
+  opengl32
+  ${WINDOWS_BINARIES_DIR}/OpenAL32
+  ${WINDOWS_BINARIES_DIR}/freetype)
 
 endif()
