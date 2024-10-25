@@ -45,8 +45,6 @@ public:
     AudioBuffer* buffer = AudioTool::ImportAudio("test2.wav");
     AudioSource* source = CreateAudioSource(buffer);
     source->Play();
-
-    Engine::Get()->Terminate();
   }
 
   void OnUpdate(float dt) override
@@ -69,7 +67,7 @@ public:
       m_Renderer->DrawTexture(Matrix4::Translate({ 0.0f, 1.0f, 0.0f }), m_Texture, {1.0f, 1.0f, 1.0f, 1.0f});
       m_Renderer->Flush();
 
-      m_Draw2D.DrawTexture(Vector2(), {100.0f, 100.0f}, m_Texture, {1.0f});
+      m_Draw2D.DrawTexture(Vector2(), { 100.0f, 100.0f }, { 0,0 }, { (float)m_Texture->GetWidth() * 0.5f, (float)m_Texture->GetHeight() * 0.5f }, m_Texture, {1.0f});
       m_Renderer->FlushDraw2D(m_Draw2D);
     }
   }

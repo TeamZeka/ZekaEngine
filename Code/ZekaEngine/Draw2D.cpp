@@ -95,6 +95,51 @@ void Draw2D::DrawTexture(const Vector2& pos, const Vector2& size, Texture* textu
   m_Indices.push_back(voff);
 }
 
+void Draw2D::DrawTexture(const Vector2& pos, const Vector2& size, const Vector2& spos, const Vector2& ssize, Texture* texture, const Vector4& color)
+{
+  Draw2DCommand cmd;
+  cmd.Offset = m_Indices.size();
+  cmd.Size = 6;
+  cmd.Texture = texture;
+  cmd.PipelineType = Draw2DPipelineType::Image;
+  m_Commands.push_back(cmd);
+
+  const uint32 voff = m_Vertices.size();
+  const Vector2 textureSize = Vector2((float)texture->GetWidth(), (float)texture->GetHeight());
+
+  Draw2DVertex v0;
+  v0.Position = Vector2(pos.X, pos.Y);
+  v0.UV = Vector2(spos.X, spos.Y) / textureSize;
+  v0.Color = color;
+  m_Vertices.push_back(v0);
+
+  Draw2DVertex v1;
+  v1.Position = Vector2(pos.X + size.X, pos.Y);
+  v1.UV = Vector2(spos.X + ssize.X, spos.Y) / textureSize;
+  v1.Color = color;
+  m_Vertices.push_back(v1);
+
+  Draw2DVertex v2;
+  v2.Position = Vector2(pos.X + size.X, pos.Y + size.Y);
+  v2.UV = Vector2(spos.X + ssize.X, spos.Y + ssize.Y) / textureSize;
+  v2.Color = color;
+  m_Vertices.push_back(v2);
+
+  Draw2DVertex v3;
+  v3.Position = Vector2(pos.X, pos.Y + size.Y);
+  v3.UV = Vector2(spos.X, spos.Y + ssize.Y) / textureSize;
+  v3.Color = color;
+  m_Vertices.push_back(v3);
+
+  m_Indices.push_back(voff);
+  m_Indices.push_back(voff + 1);
+  m_Indices.push_back(voff + 2);
+
+  m_Indices.push_back(voff + 2);
+  m_Indices.push_back(voff + 3);
+  m_Indices.push_back(voff);
+}
+
 void Draw2D::DrawText(const Vector2& pos, Font* font, const std::string& text, const Vector4& color)
 {
   Vector2 p = pos;

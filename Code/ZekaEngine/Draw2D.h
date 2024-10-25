@@ -41,6 +41,7 @@ public:
 
   void DrawQuad(const Vector2& pos, const Vector2& size, const Vector4& color);
   void DrawTexture(const Vector2& pos, const Vector2& size, Texture* texture, const Vector4& color);
+  void DrawTexture(const Vector2& pos, const Vector2& size, const Vector2& spos, const Vector2& ssize, Texture* texture, const Vector4& color);
   void DrawText(const Vector2& pos, Font* font, const std::string& text, const Vector4& color);
   void Clear();
 
