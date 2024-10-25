@@ -680,6 +680,11 @@ void RenderDevice_OpenGL::DrawIndexed(PrimitiveType prim, RHIFormat format, uint
   glDrawElements(gl_prim, size, gl_format, (const void*)offset);
 }
 
+void RenderDevice_OpenGL::SetViewport(int x, int y, int width, int height)
+{
+  glViewport(x, y, width, height);
+}
+
 Buffer* RenderDevice_OpenGL::CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags)
 {
   return new Buffer_OpenGL(type, data, size, flags);

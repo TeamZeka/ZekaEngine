@@ -14,8 +14,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
   return DefWindowProcW(hWnd, Msg, wParam, lParam);
 }
 
-WindowsWindow::WindowsWindow(const char* name, int width, int height, EventHandler& handler)
-  : Window(name, width, height, handler)
+WindowsWindow::WindowsWindow(const char* name, int width, int height, bool resizable, EventHandler& handler)
+  : Window(name, width, height, resizable, handler)
 {
   m_DestroyRequested = false;
 
@@ -35,7 +35,11 @@ WindowsWindow::WindowsWindow(const char* name, int width, int height, EventHandl
 
   DWORD dwStyle = 0, dwExStyle = 0;
   dwExStyle |= WS_EX_APPWINDOW;
-  dwStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_MAXIMIZEBOX | WS_THICKFRAME;
+  dwStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+  if (resizable)
+  {
+    dwStyle |= WS_MAXIMIZEBOX | WS_THICKFRAME;
+  }
 
   RECT rect = { 0, 0, (LONG)width, (LONG)height };
   AdjustWindowRectEx(&rect, dwStyle, FALSE, dwExStyle);
@@ -185,6 +189,47 @@ bool WindowsWindow::DestroyRequested() const
   return m_DestroyRequested;
 }
 
+void WindowsWindow::Terminate()
+{
+  m_DestroyRequested = true;
+}
+
+void WindowsWindow::SetFullscreen(bool fullscreen)
+{
+  if (m_IsFullscreen != fullscreen)
+  {
+    if (fullscreen) 
+    {
+      m_WasMaximized = IsZoomed(m_hWnd);
+
+      LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
+      LONG exStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+
+      SetWindowLong(m_hWnd, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME));
+      SetWindowLong(m_hWnd, GWL_EXSTYLE, exStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+
+      SendMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+      SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+    }
+    else 
+    {
+      LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
+      LONG exStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+
+      SetWindowLong(m_hWnd, GWL_STYLE, style | (WS_CAPTION | WS_THICKFRAME));
+      SetWindowLong(m_hWnd, GWL_EXSTYLE, exStyle | (WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+
+      SendMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+      if (m_WasMaximized) 
+      {
+        SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+      }
+    }
+
+    m_IsFullscreen = fullscreen;
+  }
+}
+
 void WindowsWindow::Show()
 {
   Window::InitializeGraphics();
@@ -195,9 +240,9 @@ void WindowsWindow::Show()
   SetFocus(m_hWnd);
 }
 
-Window* NewWindow(const char* name, int width, int height, EventHandler& handler)
+Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler)
 {
-  return new WindowsWindow(name, width, height, handler);
+  return new WindowsWindow(name, width, height, resizable, handler);
 }
 
 ZK_NAMESPACE_END

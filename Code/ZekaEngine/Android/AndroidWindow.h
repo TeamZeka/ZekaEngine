@@ -23,6 +23,7 @@ public:
   void PollEvents() override;
   void* GetHandle() const override;
   bool DestroyRequested() const override;
+  void SetFullscreen(bool fullscreen) override;
 private:
   android_app* m_pApp;
 };

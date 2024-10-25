@@ -13,6 +13,7 @@ struct ApplicationCreateParams
   const char* Name;
   int Width;
   int Height;
+  bool WindowResizable;
 };
 
 class Application

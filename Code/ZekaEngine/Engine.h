@@ -13,6 +13,8 @@ public:
   Engine();
   ~Engine();
 
+  virtual void Terminate() = 0;
+
   void SetApplication(Application* app);
   Application* GetApplication();
   Window* GetWindow();

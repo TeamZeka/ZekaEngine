@@ -74,6 +74,7 @@ public:
   void SetTexture(Texture* texture, uint32 slot) override {}
   void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) override {}
   void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) override {}
+  void SetViewport(int x, int y, int width, int height) override {}
 
   Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) override { return new Buffer_None(type, data, size, flags); }
   Shader* CreateShader(const char* source, ShaderType type) override { return new Shader_None(source, type); }

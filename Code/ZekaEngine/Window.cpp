@@ -2,7 +2,7 @@
 
 ZK_NAMESPACE_BEGIN
 
-Window::Window(const char* name, int width, int height, EventHandler& handler)
+Window::Window(const char* name, int width, int height, bool resizable, EventHandler& handler)
   : m_Name(name)
   , m_Width(width)
   , m_Height(height)
@@ -56,6 +56,11 @@ const char* Window::GetName() const
 bool Window::IsCreated() const
 {
   return m_Created;
+}
+
+bool Window::IsFullscreen() const
+{
+  return m_IsFullscreen;
 }
 
 void Window::OnWindowClosed()

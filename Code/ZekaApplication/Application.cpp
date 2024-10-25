@@ -12,6 +12,7 @@ public:
     m_Params.Name = "Test";
     m_Params.Width = 800;
     m_Params.Height = 600;
+    m_Params.WindowResizable = true;
   }
   ~TestApplication() {}
 
@@ -36,6 +37,7 @@ public:
 
     m_Renderer = new Renderer({ Engine::Get()->GetRenderDevice(), true, vs, fs, fs1, fs2, true, vs1, fs3, vs2, fs4 });
 
+    Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
     m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
     m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
     
@@ -43,11 +45,20 @@ public:
     AudioBuffer* buffer = AudioTool::ImportAudio("test2.wav");
     AudioSource* source = CreateAudioSource(buffer);
     source->Play();
+
+    Engine::Get()->Terminate();
   }
 
   void OnUpdate(float dt) override
   {
     Application::OnUpdate(dt);
+
+    const float width = (float)Engine::Get()->GetWindow()->GetWidth();
+    const float height = (float)Engine::Get()->GetWindow()->GetHeight();
+    
+    Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
+    m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
+    m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
 
     if (Engine::Get()->GetWindow()->IsCreated())
     {
@@ -58,9 +69,8 @@ public:
       m_Renderer->DrawTexture(Matrix4::Translate({ 0.0f, 1.0f, 0.0f }), m_Texture, {1.0f, 1.0f, 1.0f, 1.0f});
       m_Renderer->Flush();
 
-      Draw2D draw2d;
-      draw2d.DrawTexture(Vector2(), {100.0f, 100.0f}, m_Texture, {1.0f});
-      m_Renderer->FlushDraw2D(draw2d);
+      m_Draw2D.DrawTexture(Vector2(), {100.0f, 100.0f}, m_Texture, {1.0f});
+      m_Renderer->FlushDraw2D(m_Draw2D);
     }
   }
 
@@ -72,42 +82,7 @@ public:
 private:
   Renderer* m_Renderer;
   Texture* m_Texture;
-
-  struct ShaderSourceInfo
-  {
-    const char* Source;
-    uint32 Size;
-  
-    ShaderType Type;
-  };
-  void AddToShaderQueue(const char* filename, ShaderType type)
-  {
-    File* file = OpenFile(filename, FileAccess::Read);
-    
-    uint32 size = file->GetSize();
-    char* buffer = new char[size + 1];
-    buffer[size] = 0;
-    file->Read(buffer, size);
-    file->Close();
-
-    ShaderSourceInfo info;
-    info.Source = (const char*)buffer;
-    info.Size = size;
-    info.Type = type;
-    m_ShaderQueue.push_back(info);
-  }
-
-  void SaveShaderQueue()
-  {
-    File* stream = OpenFile("engine_shaders.pak", FileAccess::Write);
-    for (const auto info : m_ShaderQueue)
-    {
-      ShaderTool::SaveShader(stream, info.Source, info.Size, info.Type);
-    }
-    m_ShaderQueue.clear();
-    stream->Close();
-  }
-  std::vector<ShaderSourceInfo> m_ShaderQueue;
+  Draw2D m_Draw2D;
 };
 
 ZK_NAMESPACE_BEGIN

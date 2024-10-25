@@ -429,6 +429,7 @@ public:
   virtual void SetTexture(Texture* texture, uint32 slot) = 0;
   virtual void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) = 0;
   virtual void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) = 0;
+  virtual void SetViewport(int x, int y, int width, int height) = 0;
 
   virtual Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) = 0;
   virtual Shader* CreateShader(const char* source, ShaderType type) = 0;

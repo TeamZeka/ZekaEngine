@@ -25,4 +25,9 @@ AAssetManager* AndroidEngine::GetAssetManager()
   return m_NativeApplication->activity->assetManager;
 }
 
+void AndroidEngine::Terminate()
+{
+  ANativeActivity_finish(m_NativeApplication->activity);
+}
+
 ZK_NAMESPACE_END

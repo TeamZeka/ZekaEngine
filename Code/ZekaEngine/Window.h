@@ -9,12 +9,13 @@ ZK_NAMESPACE_BEGIN
 class Window
 {
 public:
-  Window(const char* name, int width, int height, EventHandler& handler);
+  Window(const char* name, int width, int height, bool resizable, EventHandler& handler);
   ~Window();
 
-  virtual void PollEvents() {}
-  virtual void* GetHandle() const { return nullptr; }
-  virtual bool DestroyRequested() const { return false; }
+  virtual void PollEvents() = 0;
+  virtual void* GetHandle() const = 0;
+  virtual bool DestroyRequested() const = 0;
+  virtual void SetFullscreen(bool fullscreen) = 0;
 
   bool InitializeGraphics();
   void ShutdownGraphics();
@@ -25,6 +26,7 @@ public:
   int GetHeight() const;
   const char* GetName() const;
   bool IsCreated() const;
+  bool IsFullscreen() const;
 protected:
   void OnWindowClosed();
   void OnWindowResized(int width, int height);
@@ -45,9 +47,10 @@ protected:
   EventHandler& m_EventHandler;
   GraphicsContext* m_GraphicsContext;
   bool m_Created = false;
+  bool m_IsFullscreen = false;
 };
 
-Window* NewWindow(const char* name, int width, int height, EventHandler& handler);
+Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler);
 
 ZK_NAMESPACE_END
 

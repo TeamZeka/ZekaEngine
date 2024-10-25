@@ -126,8 +126,10 @@ AndroidKeyMap s_AndroidKeyMap[] =
 };
 
 AndroidWindow::AndroidWindow(const char* name, EventHandler& handler)
-  : Window(name, 0, 0, handler)
+  : Window(name, 0, 0, false, handler)
 {
+  m_IsFullscreen = true;
+
   m_pApp = static_cast<AndroidEngine*>(Engine::Get())->GetNativeApplication();
 }
 
@@ -292,7 +294,11 @@ bool AndroidWindow::DestroyRequested() const
   return m_pApp->destroyRequested;
 }
 
-Window* NewWindow(const char* name, int width, int height, EventHandler& handler)
+void AndroidWindow::SetFullscreen(bool fullscreen)
+{
+}
+
+Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler)
 {
   return new AndroidWindow(name, handler);
 }

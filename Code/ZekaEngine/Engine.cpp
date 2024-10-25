@@ -44,7 +44,7 @@ void Engine::Run()
   Time::Initialize();
 
   const auto appCreateParams = m_Application->GetParams();
-  m_Window = NewWindow(appCreateParams.Name, appCreateParams.Width, appCreateParams.Height, m_EventHandler);
+  m_Window = NewWindow(appCreateParams.Name, appCreateParams.Width, appCreateParams.Height, appCreateParams.WindowResizable, m_EventHandler);
   if (m_Window->IsCreated())
   {
     OnWindowCreated();
