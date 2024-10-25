@@ -1,10 +1,11 @@
 #include "ShaderTool.h"
 #include "Platform.h"
 #include "Encryption.h"
+#include "Engine.h"
 
 ZK_NAMESPACE_BEGIN
 
-Shader* ShaderTool::ImportShader(RenderDevice* device, const char* filename, ShaderType type)
+Shader* ShaderTool::ImportShader(const char* filename, ShaderType type)
 {
   File* file = OpenFile(filename, FileAccess::Read);
   const uint32 size = file->GetSize();
@@ -14,7 +15,7 @@ Shader* ShaderTool::ImportShader(RenderDevice* device, const char* filename, Sha
   file->Read(data, size);
   file->Close();
 
-  return device->CreateShader(data, type);
+  return Engine::Get()->GetRenderDevice()->CreateShader(data, type);
 }
 
 void ShaderTool::SaveShader(File* stream, const char* source, uint32 size, ShaderType type)
@@ -31,7 +32,7 @@ void ShaderTool::SaveShader(File* stream, const char* source, uint32 size, Shade
   stream->Write(memory, size);
 }
 
-Shader* ShaderTool::ImportShader(RenderDevice* device, File* stream)
+Shader* ShaderTool::ImportShader(File* stream)
 {
   uint32 size = 0;
   stream->Read(&size, sizeof(uint32));
@@ -45,7 +46,7 @@ Shader* ShaderTool::ImportShader(RenderDevice* device, File* stream)
   Encryption::EncryptBytes((uint8*)memory, size);
   memory[size] = 0;
 
-  return device->CreateShader(memory, type);
+  return Engine::Get()->GetRenderDevice()->CreateShader(memory, type);
 }
 
 ZK_NAMESPACE_END

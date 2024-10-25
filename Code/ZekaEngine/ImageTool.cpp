@@ -1,5 +1,6 @@
 #include "ImageTool.h"
 #include "FileSystem.h"
+#include "Engine.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -80,7 +81,7 @@ static PixelFormat BitsToFormat(uint32 bits)
   }
 }
 
-Texture* ImageTool::ImportTexture(RenderDevice* device, const char* filename, bool flipY)
+Texture* ImageTool::ImportTexture(const char* filename, bool flipY)
 {
   uint32 width = 0;
   uint32 height = 0;
@@ -89,7 +90,12 @@ Texture* ImageTool::ImportTexture(RenderDevice* device, const char* filename, bo
 
   PixelFormat format = BitsToFormat(bits);
 
-  return device->CreateTexture(format, width, height, data);
+  Texture* texture = Engine::Get()->GetRenderDevice()->CreateTexture(format, width, height, data);
+  texture->SetWrapT(TextureWrap::Repeat);
+  texture->SetWrapS(TextureWrap::Repeat);
+  texture->SetMagFilter(TextureFilter::Linear);
+  texture->SetMinFilter(TextureFilter::Linear);
+  return texture;
 }
 
 ZK_NAMESPACE_END

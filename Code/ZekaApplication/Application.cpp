@@ -19,21 +19,17 @@ public:
   {
     Application::OnInitialize();
 
-    m_Texture = ImageTool::ImportTexture(Engine::Get()->GetRenderDevice(), "resim.png");
-    m_Texture->SetWrapT(TextureWrap::ClampToEdge);
-    m_Texture->SetWrapS(TextureWrap::ClampToEdge);
-    m_Texture->SetMagFilter(TextureFilter::Linear);
-    m_Texture->SetMinFilter(TextureFilter::Linear);
+    m_Texture = ImageTool::ImportTexture("resim.png");
 
     File* file = OpenFile("engine_shaders.pak", FileAccess::Read);
-    Shader* vs = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* fs = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* fs1 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* fs2 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* vs1 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* fs3 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* vs2 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
-    Shader* fs4 = ShaderTool::ImportShader(Engine::Get()->GetRenderDevice(), file);
+    Shader* vs = ShaderTool::ImportShader(file);
+    Shader* fs = ShaderTool::ImportShader(file);
+    Shader* fs1 = ShaderTool::ImportShader(file);
+    Shader* fs2 = ShaderTool::ImportShader(file);
+    Shader* vs1 = ShaderTool::ImportShader(file);
+    Shader* fs3 = ShaderTool::ImportShader(file);
+    Shader* vs2 = ShaderTool::ImportShader(file);
+    Shader* fs4 = ShaderTool::ImportShader(file);
 
     const float width = (float)Engine::Get()->GetWindow()->GetWidth();
     const float height = (float)Engine::Get()->GetWindow()->GetHeight();
