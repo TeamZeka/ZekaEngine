@@ -58,7 +58,7 @@ private:
     const uint32 MaxQuads = 20000;
     const uint32 MaxVertices = MaxQuads * 4;
     const uint32 MaxIndices = MaxQuads * 6;
-    const uint32 MaxTextureSlots = 32;
+    const uint32 MaxTextureSlots = 16;
   } m_Limits;
 
   struct
@@ -87,7 +87,7 @@ private:
     Buffer* UniformBuffer;
     Pipeline* Pipeline;
 
-    Texture* Textures[32];
+    Texture* Textures[16];
     uint32 TextureIndex = 0;
 
     std::vector<QuadVertex> Vertices;

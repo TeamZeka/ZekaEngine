@@ -63,6 +63,7 @@ uint8* ImageTool::ImportImage(const char* filename, uint32& width, uint32& heigh
 
   uint8* buffer = new uint8[size];
   file->Read(buffer, size);
+  file->Close();
 
   return CreateFromMemory(buffer, size, width, height, bits, flipY);
 }

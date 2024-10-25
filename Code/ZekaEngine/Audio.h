@@ -28,7 +28,7 @@ public:
   AudioBuffer() {}
   ~AudioBuffer() {}
 
-  virtual void Write(const uint8* bytes, uint32 size, const AudioData& info) {}
+  virtual void Write(const uint8* bytes, uint32 size, const AudioData& info) = 0;
 };
 
 class AudioSource;
@@ -53,10 +53,9 @@ enum class AudioState : uint32
 class AudioSource
 {
 public:
-  AudioSource();
+  AudioSource(AudioBuffer* buffer);
   ~AudioSource();
 
-  void SetBuffer(AudioBuffer* buffer);
   AudioBuffer* GetBuffer() const;
   void Play();
   void Stop();
@@ -68,13 +67,13 @@ public:
   float GetVolume() const;
   void Update();
 private:
-  virtual void SetBuffer_Internal(AudioBuffer* buffer) {}
-  virtual void Play_Internal() {}
-  virtual void Stop_Internal() {}
-  virtual void Pause_Internal() {}
-  virtual void SetIsLooping_Internal(bool looping) {}
-  virtual void SetVolume_Internal(float volume) {}
-  virtual AudioState GetState_Internal() const { return AudioState::Stopped; }
+  virtual void SetNonStreamingBuffer_Internal(AudioBuffer* buffer) = 0;
+  virtual void Play_Internal() = 0;
+  virtual void Stop_Internal() = 0;
+  virtual void Pause_Internal() = 0;
+  virtual void SetIsLooping_Internal(bool looping) = 0;
+  virtual void SetVolume_Internal(float volume) = 0;
+  virtual AudioState GetState_Internal() const = 0;
 private:
   AudioBuffer* m_Buffer;
   AudioState m_State;
@@ -82,9 +81,28 @@ private:
   float m_Volume;
 };
 
-AudioDevice* CreateAudioDevice();
-AudioBuffer* CreateAudioBuffer();
-AudioSource* CreateAudioSource();
+AudioDevice* CreateAudioDevice_OpenAL();
+AudioBuffer* CreateAudioBuffer_OpenAL();
+AudioSource* CreateAudioSource_OpenAL(AudioBuffer* buffer);
+
+AudioDevice* CreateAudioDevice_None();
+AudioBuffer* CreateAudioBuffer_None();
+AudioSource* CreateAudioSource_None(AudioBuffer* buffer);
+
+inline AudioDevice* CreateAudioDevice()
+{
+  return CreateAudioDevice_OpenAL();
+}
+
+inline AudioBuffer* CreateAudioBuffer()
+{
+  return CreateAudioBuffer_OpenAL();
+}
+
+inline AudioSource* CreateAudioSource(AudioBuffer* buffer)
+{
+  return CreateAudioSource_OpenAL(buffer);
+}
 
 ZK_NAMESPACE_END
 

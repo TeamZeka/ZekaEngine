@@ -57,9 +57,12 @@ add_library(ZekaEngine
   ${ZekaEngine_SOURCES}
 )
 
-if (ANDROID)
+target_link_libraries(ZekaEngine
 
-set(ANDROID_BINARIES_DIR ../../Binaries/Android/ThirdParty/ARM64)
+  OpenAL
+  freetype)
+
+if (ANDROID)
 
 target_link_libraries(ZekaEngine
 
@@ -71,12 +74,8 @@ target_link_libraries(ZekaEngine
 
 elseif (WIN32)
 
-set(WINDOWS_BINARIES_DIR ../../Binaries/Windows/ThirdParty/x64)
-
 target_link_libraries(ZekaEngine
 
-  opengl32
-  ${WINDOWS_BINARIES_DIR}/OpenAL32
-  ${WINDOWS_BINARIES_DIR}/freetype)
+  opengl32)
 
 endif()

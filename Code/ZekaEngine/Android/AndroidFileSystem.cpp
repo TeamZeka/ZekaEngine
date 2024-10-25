@@ -15,15 +15,15 @@ AndroidFile::~AndroidFile()
 {
 }
 
-bool AndroidFile::Read(void* dst, uint64 size)
+uint32 AndroidFile::Read(void* dst, uint64 size)
 {
   const uint64 tmp = AAsset_read(m_Asset, dst, size);
-  return tmp != -1;
+  return tmp;
 }
 
-bool AndroidFile::Write(const void* src, uint64 size)
+uint32 AndroidFile::Write(const void* src, uint64 size)
 {
-  return true;
+  return 0;
 }
 
 void AndroidFile::Close()

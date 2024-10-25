@@ -34,10 +34,10 @@ private:
 class AudioSource_OpenAL : public AudioSource
 {
 public:
-  AudioSource_OpenAL();
+  AudioSource_OpenAL(AudioBuffer* buffer);
   ~AudioSource_OpenAL();
 
-  void SetBuffer_Internal(AudioBuffer* buffer) override;
+  void SetNonStreamingBuffer_Internal(AudioBuffer* buffer) override;
   void Play_Internal() override;
   void Stop_Internal() override;
   void Pause_Internal() override;

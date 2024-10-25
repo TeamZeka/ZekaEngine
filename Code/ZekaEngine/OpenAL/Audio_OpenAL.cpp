@@ -69,7 +69,8 @@ ALuint AudioBuffer_OpenAL::GetBuffer() const
   return m_Buffer;
 }
 
-AudioSource_OpenAL::AudioSource_OpenAL()
+AudioSource_OpenAL::AudioSource_OpenAL(AudioBuffer* buffer)
+  : AudioSource(buffer)
 {
   alGenSources(1, &m_Source);
 }
@@ -79,14 +80,14 @@ AudioSource_OpenAL::~AudioSource_OpenAL()
   alDeleteSources(1, &m_Source);
 }
 
-void AudioSource_OpenAL::SetBuffer_Internal(AudioBuffer* buffer)
+void AudioSource_OpenAL::SetNonStreamingBuffer_Internal(AudioBuffer* buffer)
 {
   AudioBuffer_OpenAL* al_buffer = static_cast<AudioBuffer_OpenAL*>(buffer);
   if (al_buffer)
   {
     alSourcei(m_Source, AL_BUFFER, al_buffer->GetBuffer());
   }
-  else
+  else 
   {
     alSourcei(m_Source, AL_BUFFER, 0);
   }
@@ -132,19 +133,19 @@ AudioState AudioSource_OpenAL::GetState_Internal() const
   return AudioState::Stopped;
 }
 
-AudioBuffer* CreateAudioBuffer()
+AudioBuffer* CreateAudioBuffer_OpenAL()
 {
   return new AudioBuffer_OpenAL();
 }
 
-AudioDevice* CreateAudioDevice()
+AudioDevice* CreateAudioDevice_OpenAL()
 {
   return new AudioDevice_OpenAL();
 }
 
-AudioSource* CreateAudioSource()
+AudioSource* CreateAudioSource_OpenAL(AudioBuffer* buffer)
 {
-  return new AudioSource_OpenAL();
+  return new AudioSource_OpenAL(buffer);
 }
 
 ZK_NAMESPACE_END

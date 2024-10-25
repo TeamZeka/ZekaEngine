@@ -32,8 +32,8 @@ void AudioSourceManager::Update()
   }
 }
 
-AudioSource::AudioSource()
-  : m_Buffer(nullptr)
+AudioSource::AudioSource(AudioBuffer* buffer)
+  : m_Buffer(buffer)
   , m_State(AudioState::Stopped)
   , m_IsLooping(false)
   , m_Volume(1.0f)
@@ -43,16 +43,6 @@ AudioSource::AudioSource()
 
 AudioSource::~AudioSource() 
 {
-}
-
-void AudioSource::SetBuffer(AudioBuffer* buffer)
-{
-  if (m_Buffer != buffer)
-  {
-    SetBuffer_Internal(buffer);
-
-    m_Buffer = buffer;
-  }
 }
 
 AudioBuffer* AudioSource::GetBuffer() const
@@ -67,30 +57,45 @@ void AudioSource::Play()
     return;
   }
 
-  Play_Internal();
+  switch (m_State)
+  {
+  case AudioState::Playing: break;
+  case AudioState::Stopped:
+  {
+    SetNonStreamingBuffer_Internal(m_Buffer);
+    Play_Internal();
+    break;
+  }
+  case AudioState::Paused:
+  {
+    Play_Internal();
+    break;
+  }
+  }
+
   m_State = AudioState::Playing;
 }
 
 void AudioSource::Stop()
-{
-  if (m_State != AudioState::Playing)
-  {
-    return;
-  }
-
-  Pause_Internal();
-  m_State = AudioState::Paused;
-}
-
-void AudioSource::Pause()
 {
   if (m_State == AudioState::Stopped)
   {
     return;
   }
 
-  Stop_Internal();
   m_State = AudioState::Stopped;
+  Stop_Internal();
+}
+
+void AudioSource::Pause()
+{
+  if (m_State != AudioState::Playing)
+  {
+    return;
+  }
+
+  m_State = AudioState::Paused;
+  Pause_Internal();
 }
 
 AudioState AudioSource::GetState() const

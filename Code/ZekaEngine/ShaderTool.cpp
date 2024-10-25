@@ -12,6 +12,7 @@ Shader* ShaderTool::ImportShader(RenderDevice* device, const char* filename, Sha
   char* data = new char[size + 1];
   data[size] = 0;
   file->Read(data, size);
+  file->Close();
 
   return device->CreateShader(data, type);
 }
@@ -40,7 +41,7 @@ Shader* ShaderTool::ImportShader(RenderDevice* device, File* stream)
 
   char* memory = new char[size + 1];
   stream->Read(memory, size);
-
+  
   Encryption::EncryptBytes((uint8*)memory, size);
   memory[size] = 0;
 

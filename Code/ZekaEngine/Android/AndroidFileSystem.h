@@ -13,8 +13,8 @@ public:
   AndroidFile(const char* name, FileAccess access);
   ~AndroidFile();
 
-  bool Read(void* dst, uint64 size) override;
-  bool Write(const void* src, uint64 size) override;
+  uint32 Read(void* dst, uint64 size) override;
+  uint32 Write(const void* src, uint64 size) override;
   void Close() override;
   uint32 GetSize() const override;
   uint32 GetPosition() const override;

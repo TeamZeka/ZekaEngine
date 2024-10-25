@@ -2,7 +2,7 @@
 precision mediump float;
 #endif
 
-#define ZK_MAX_TEXTURES 32
+#define ZK_MAX_TEXTURES 16
 
 out vec4 outColor;
 
@@ -34,22 +34,6 @@ void main()
   case 13: texColor *= texture(u_Textures[13], UV); break;
   case 14: texColor *= texture(u_Textures[14], UV); break;
   case 15: texColor *= texture(u_Textures[15], UV); break;
-  case 16: texColor *= texture(u_Textures[16], UV); break;
-  case 17: texColor *= texture(u_Textures[17], UV); break;
-  case 18: texColor *= texture(u_Textures[18], UV); break;
-  case 19: texColor *= texture(u_Textures[19], UV); break;
-  case 20: texColor *= texture(u_Textures[20], UV); break;
-  case 21: texColor *= texture(u_Textures[21], UV); break;
-  case 22: texColor *= texture(u_Textures[22], UV); break;
-  case 23: texColor *= texture(u_Textures[23], UV); break;
-  case 24: texColor *= texture(u_Textures[24], UV); break;
-  case 25: texColor *= texture(u_Textures[25], UV); break;
-  case 26: texColor *= texture(u_Textures[26], UV); break;
-  case 27: texColor *= texture(u_Textures[27], UV); break;
-  case 28: texColor *= texture(u_Textures[28], UV); break;
-  case 29: texColor *= texture(u_Textures[29], UV); break;
-  case 30: texColor *= texture(u_Textures[30], UV); break;
-  case 31: texColor *= texture(u_Textures[31], UV); break;
   }
 
   outColor = texColor;

@@ -41,7 +41,7 @@ public:
   {}
   ~Buffer() {}
 
-  virtual void SetData(const void* data, uint32 size) {}
+  virtual void SetData(const void* data, uint32 size) = 0;
 
   BufferType GetBufferType() const { return m_Type; }
   BufferFlags GetBufferFlags() const { return m_Flags; }
@@ -389,11 +389,11 @@ public:
   Texture(PixelFormat format, uint32 width, uint32 height, const void* data) : m_PixelFormat(format), m_Width(width), m_Height(height) {}
   ~Texture() {}
   
-  virtual void SetMinFilter(TextureFilter filter) {}
-  virtual void SetMagFilter(TextureFilter filter) {}
-  virtual void SetWrapT(TextureWrap wrap) {}
-  virtual void SetWrapS(TextureWrap wrap) {}
-  virtual void SetWrapR(TextureWrap wrap) {}
+  virtual void SetMinFilter(TextureFilter filter) = 0;
+  virtual void SetMagFilter(TextureFilter filter) = 0;
+  virtual void SetWrapT(TextureWrap wrap) = 0;
+  virtual void SetWrapS(TextureWrap wrap) = 0;
+  virtual void SetWrapR(TextureWrap wrap) = 0;
 
   PixelFormat GetPixelFormat() const { return m_PixelFormat; }
   uint32 GetWidth() const { return m_Width; }
@@ -420,20 +420,20 @@ public:
   RenderDevice() {}
   ~RenderDevice() {}
 
-  virtual void Clear(uint32 flags) {}
-  virtual void ClearColor(const Vector4& color) {}
-  virtual void SetVertexBuffer(Buffer* buffer) {}
-  virtual void SetIndexBuffer(Buffer* buffer) {}
-  virtual void SetUniformBuffer(Buffer* buffer, uint32 id) {}
-  virtual void SetPipeline(Pipeline* pipeline) {}
-  virtual void SetTexture(Texture* texture, uint32 slot) {}
-  virtual void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) {}
-  virtual void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) {}
+  virtual void Clear(uint32 flags) = 0;
+  virtual void ClearColor(const Vector4& color) = 0;
+  virtual void SetVertexBuffer(Buffer* buffer) = 0;
+  virtual void SetIndexBuffer(Buffer* buffer) = 0;
+  virtual void SetUniformBuffer(Buffer* buffer, uint32 id) = 0;
+  virtual void SetPipeline(Pipeline* pipeline) = 0;
+  virtual void SetTexture(Texture* texture, uint32 slot) = 0;
+  virtual void DrawArrays(PrimitiveType prim, uint32 offset, uint32 size) = 0;
+  virtual void DrawIndexed(PrimitiveType prim, RHIFormat format, uint32 offset, uint32 size) = 0;
 
-  virtual Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) { return nullptr; }
-  virtual Shader* CreateShader(const char* source, ShaderType type) { return nullptr; }
-  virtual Pipeline* CreatePipeline(const PipelineDesc& desc) { return nullptr; }
-  virtual Texture* CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data) { return nullptr; }
+  virtual Buffer* CreateBuffer(BufferType type, const void* data, uint32 size, BufferFlags flags) = 0;
+  virtual Shader* CreateShader(const char* source, ShaderType type) = 0;
+  virtual Pipeline* CreatePipeline(const PipelineDesc& desc) = 0;
+  virtual Texture* CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data) = 0;
 };
 
 RenderDevice* CreateRenderDevice_OpenGL(GraphicsContext* context);

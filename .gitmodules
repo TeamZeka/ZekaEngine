@@ -1,0 +1,6 @@
+[submodule "Code/ThirdParty/freetype"]
+	path = Code/ThirdParty/freetype
+	url = https://github.com/TeamZeka/freetype.git
+[submodule "Code/ThirdParty/openal-soft"]
+	path = Code/ThirdParty/openal-soft
+	url = https://github.com/TeamZeka/openal-soft.git
