@@ -20,7 +20,20 @@ public:
   {
     Application::OnInitialize();
 
+    Engine::Get()->GetWindow()->GetGraphicsContext()->SetVSync(true);
+
     m_Texture = ImageTool::ImportTexture("resim.png");
+
+    // AddToShaderQueue("Draw2D_VS.glsl", ShaderType::Vertex);
+    // AddToShaderQueue("Draw2D_Image_FS.glsl", ShaderType::Fragment);
+    // AddToShaderQueue("Draw2D_Color_FS.glsl", ShaderType::Fragment);
+    // AddToShaderQueue("Draw2D_Text_FS.glsl", ShaderType::Fragment);
+    // AddToShaderQueue("Renderer_Line_VS.glsl", ShaderType::Vertex);
+    // AddToShaderQueue("Renderer_Line_FS.glsl", ShaderType::Fragment);
+    // AddToShaderQueue("Renderer_Quad_VS.glsl", ShaderType::Vertex);
+    // AddToShaderQueue("Renderer_Quad_FS.glsl", ShaderType::Fragment);
+    // 
+    // SaveShaderQueue();
 
     File* file = OpenFile("engine_shaders.pak", FileAccess::Read);
     Shader* vs = ShaderTool::ImportShader(file);
@@ -81,6 +94,41 @@ private:
   Renderer* m_Renderer;
   Texture* m_Texture;
   Draw2D m_Draw2D;
+
+  struct ShaderSourceInfo
+  {
+    const char* Source;
+    uint32 Size;
+
+    ShaderType Type;
+  };
+  void AddToShaderQueue(const char* filename, ShaderType type)
+  {
+    File* file = OpenFile(filename, FileAccess::Read);
+
+    uint32 size = file->GetSize();
+    char* buffer = new char[size + 1];
+    buffer[size] = 0;
+    file->Read(buffer, size);
+    file->Close();
+    ShaderSourceInfo info;
+    info.Source = (const char*)buffer;
+    info.Size = size;
+    info.Type = type;
+    m_ShaderQueue.push_back(info);
+  }
+
+  void SaveShaderQueue()
+  {
+    File* stream = OpenFile("engine_shaders.pak", FileAccess::Write);
+    for (const auto info : m_ShaderQueue)
+    {
+      ShaderTool::SaveShader(stream, info.Source, info.Size, info.Type);
+    }
+    m_ShaderQueue.clear();
+    stream->Close();
+  }
+  std::vector<ShaderSourceInfo> m_ShaderQueue;
 };
 
 ZK_NAMESPACE_BEGIN

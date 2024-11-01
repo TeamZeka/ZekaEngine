@@ -28,6 +28,7 @@ public:
   bool InitializeGraphics(void* windowHandle) override;
   void ShutdownGraphics() override;
   void Present() override;
+  void SetVSync(bool vsync) override;
 private:
   HDC m_hDC;
   HGLRC m_Context;

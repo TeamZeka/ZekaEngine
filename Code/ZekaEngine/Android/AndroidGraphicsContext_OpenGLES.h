@@ -19,6 +19,7 @@ public:
   bool InitializeGraphics(void* windowHandle) override;
   void ShutdownGraphics() override;
   void Present() override;
+  void SetVSync(bool vsync) override;
 private:
   EGLDisplay m_Display = EGL_NO_DISPLAY;
   EGLSurface m_Surface = EGL_NO_SURFACE;

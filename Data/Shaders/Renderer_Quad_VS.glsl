@@ -1,7 +1,7 @@
-in vec3 a_Pos;
-in vec2 a_UV;
-in vec4 a_Color;
-in float a_TexIdx;
+layout (location = 0) in vec3 a_Pos;
+layout (location = 1) in vec2 a_UV;
+layout (location = 2) in vec4 a_Color;
+layout (location = 3) in float a_TexIdx;
 
 uniform UBO
 {

@@ -115,7 +115,38 @@ namespace Math
     return isinf(val);
 #endif
   }
+
+  inline int Rand()
+  {
+    return rand();
+  }
+
+  inline int RandRange(int max)
+  {
+    return rand() % max;
+  }
+
+  inline int RandRange(int min, int max)
+  {
+    return min + rand() % (max - min);
+  }
+
+  inline float Randf()
+  {
+    return float(rand()) / float(RAND_MAX);
+  }
+
+  inline float RandRangef(float max)
+  {
+    return Randf() * max;
+  }
+
+  inline float RandRangef(float min, float max)
+  {
+    return min + Randf() * (max - min);
+  }
 }
+
 
 ZK_NAMESPACE_END
 

@@ -106,6 +106,16 @@ void AndroidGraphicsContext_OpenGLES::Present()
   eglSwapBuffers(m_Display, m_Surface);
 }
 
+void AndroidGraphicsContext_OpenGLES::SetVSync(bool vsync)
+{
+  if (m_IsVSync != vsync)
+  {
+    m_IsVSync = vsync;
+
+    eglSwapInterval(m_Display, vsync ? EGL_TRUE : EGL_FALSE);
+  }
+}
+
 GraphicsContext* CreateGraphicsContext_OpenGL()
 {
   return new AndroidGraphicsContext_OpenGLES();

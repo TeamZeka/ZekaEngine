@@ -39,6 +39,8 @@ RenderDevice* Engine::GetRenderDevice()
 
 void Engine::Run()
 {
+  srand(Platform::GetCounter());
+
   m_EventHandler.Callback = ZK_GET_EVENT_FUNCTION(m_Application->OnEvent);
 
   Time::Initialize();

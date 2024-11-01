@@ -3,6 +3,12 @@
 
 ZK_NAMESPACE_BEGIN
 
+static struct
+{
+  PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
+  PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = NULL;
+} s_WindowContextInfo;
+
 WindowsGraphicsContext_OpenGL::WindowsGraphicsContext_OpenGL()
 {
 }
@@ -40,8 +46,8 @@ bool WindowsGraphicsContext_OpenGL::InitializeGraphics(void* windowHandle)
   HGLRC tempContext = wglCreateContext(m_hDC);
   wglMakeCurrent(m_hDC, tempContext);
 
-  PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-  PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+  s_WindowContextInfo.wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+  s_WindowContextInfo.wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
 
   const int contextAttribsList[] = {
       WGL_CONTEXT_MAJOR_VERSION_ARB,
@@ -60,7 +66,7 @@ bool WindowsGraphicsContext_OpenGL::InitializeGraphics(void* windowHandle)
       0,
   };
 
-  m_Context = wglCreateContextAttribsARB(m_hDC, nullptr, contextAttribsList);
+  m_Context = s_WindowContextInfo.wglCreateContextAttribsARB(m_hDC, nullptr, contextAttribsList);
   if (wglMakeCurrent(m_hDC, m_Context) == FALSE)
   {
     return false;
@@ -82,6 +88,16 @@ void WindowsGraphicsContext_OpenGL::ShutdownGraphics()
 void WindowsGraphicsContext_OpenGL::Present()
 {
   SwapBuffers(m_hDC);
+}
+
+void WindowsGraphicsContext_OpenGL::SetVSync(bool vsync)
+{
+  if (m_IsVSync != vsync)
+  {
+    m_IsVSync = vsync;
+    
+    s_WindowContextInfo.wglSwapIntervalEXT(vsync ? 1 : 0);
+  }
 }
 
 GraphicsContext* CreateGraphicsContext_OpenGL()

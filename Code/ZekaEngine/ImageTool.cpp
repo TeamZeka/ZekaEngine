@@ -91,8 +91,8 @@ Texture* ImageTool::ImportTexture(const char* filename, bool flipY)
   PixelFormat format = BitsToFormat(bits);
 
   Texture* texture = Engine::Get()->GetRenderDevice()->CreateTexture(format, width, height, data);
-  texture->SetWrapT(TextureWrap::Repeat);
-  texture->SetWrapS(TextureWrap::Repeat);
+  texture->SetWrapT(TextureWrap::Clamp);
+  texture->SetWrapS(TextureWrap::Clamp);
   texture->SetMagFilter(TextureFilter::Linear);
   texture->SetMinFilter(TextureFilter::Linear);
   return texture;

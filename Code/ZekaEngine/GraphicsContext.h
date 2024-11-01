@@ -14,10 +14,13 @@ public:
   virtual bool InitializeGraphics(void* windowHandle) = 0;
   virtual void ShutdownGraphics() = 0;
   virtual void Present() = 0;
+  virtual void SetVSync(bool vsync) = 0;
 
   void* GetWindowHandle() const { return m_WindowHandle; }
+  bool IsVSync() const { return m_IsVSync; }
 protected:
   void* m_WindowHandle;
+  bool m_IsVSync;
 };
 
 GraphicsContext* CreateGraphicsContext_OpenGL();
