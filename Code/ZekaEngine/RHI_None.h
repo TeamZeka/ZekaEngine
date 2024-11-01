@@ -21,6 +21,7 @@ public:
   
   void ShutdownGraphics() override {}
   void Present() override {}
+  void SetVSync(bool vsync) override { m_IsVSync = vsync; }
 };
 
 class Buffer_None : public Buffer
