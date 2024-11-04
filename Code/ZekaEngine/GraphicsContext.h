@@ -21,18 +21,19 @@ public:
 protected:
   void* m_WindowHandle;
   bool m_IsVSync;
+public:
+  static GraphicsContext* Create_OpenGL();
+  static GraphicsContext* Create_None();
+  static GraphicsContext* Create();
 };
 
-GraphicsContext* CreateGraphicsContext_OpenGL();
-GraphicsContext* CreateGraphicsContext_None();
-
 inline 
-GraphicsContext* CreateGraphicsContext()
+GraphicsContext* GraphicsContext::Create()
 {
   switch (GraphicsAPI::Get())
   {
-  case GraphicsAPIType::OpenGL: return CreateGraphicsContext_OpenGL();
-  case GraphicsAPIType::None: return CreateGraphicsContext_None();
+  case GraphicsAPIType::OpenGL: return GraphicsContext::Create_OpenGL();
+  case GraphicsAPIType::None: return GraphicsContext::Create_None();
   }
 
   return nullptr;

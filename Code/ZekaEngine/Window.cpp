@@ -8,7 +8,7 @@ Window::Window(const char* name, int width, int height, bool resizable, EventHan
   , m_Height(height)
   , m_EventHandler(handler)
 {
-  m_GraphicsContext = CreateGraphicsContext();
+  m_GraphicsContext = GraphicsContext::Create();
 }
 
 Window::~Window()

@@ -100,7 +100,7 @@ void WindowsGraphicsContext_OpenGL::SetVSync(bool vsync)
   }
 }
 
-GraphicsContext* CreateGraphicsContext_OpenGL()
+GraphicsContext* GraphicsContext::Create_OpenGL()
 {
   return new WindowsGraphicsContext_OpenGL();
 }

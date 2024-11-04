@@ -2,12 +2,12 @@
 
 ZK_NAMESPACE_BEGIN
 
-GraphicsContext* CreateGraphicsContext_None()
+GraphicsContext* GraphicsContext::Create_None()
 {
   return new GraphicsContext_None();
 }
 
-RenderDevice* CreateRenderDevice_None(GraphicsContext* context)
+RenderDevice* RenderDevice::Create_None(GraphicsContext* context)
 {
   return new RenderDevice_None();
 }

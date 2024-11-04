@@ -116,7 +116,7 @@ void AndroidGraphicsContext_OpenGLES::SetVSync(bool vsync)
   }
 }
 
-GraphicsContext* CreateGraphicsContext_OpenGL()
+GraphicsContext* GraphicsContext::Create_OpenGL()
 {
   return new AndroidGraphicsContext_OpenGLES();
 }

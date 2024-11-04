@@ -298,7 +298,7 @@ void AndroidWindow::SetFullscreen(bool fullscreen)
 {
 }
 
-Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler)
+Window* Window::Create(const char* name, int width, int height, bool resizable, EventHandler& handler)
 {
   return new AndroidWindow(name, handler);
 }

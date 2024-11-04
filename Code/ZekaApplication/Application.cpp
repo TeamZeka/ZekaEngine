@@ -54,9 +54,9 @@ public:
     m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
     m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
     
-    AudioDevice* device = CreateAudioDevice();
-    AudioBuffer* buffer = AudioTool::ImportAudio("test2.wav");
-    AudioSource* source = CreateAudioSource(buffer);
+    AudioDevice* device = AudioDevice::Create();
+    AudioBuffer* buffer = AudioTool::ImportAudio("test1.wav");
+    AudioSource* source = AudioSource::Create(buffer);
     source->Play();
   }
 

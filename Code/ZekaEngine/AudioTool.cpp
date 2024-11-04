@@ -19,7 +19,7 @@ AudioBuffer* AudioTool::ImportAudio(const char* filename)
   data.NumSamples = decoder.GetNumSamples();
   data.SampleRate = decoder.GetSampleRate();
 
-  AudioBuffer* buffer = CreateAudioBuffer();
+  AudioBuffer* buffer = AudioBuffer::Create();
   buffer->Write(bytes.data(), bytes.size(), data);
   return buffer;
 }

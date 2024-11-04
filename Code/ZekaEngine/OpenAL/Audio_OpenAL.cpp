@@ -133,17 +133,17 @@ AudioState AudioSource_OpenAL::GetState_Internal() const
   return AudioState::Stopped;
 }
 
-AudioBuffer* CreateAudioBuffer_OpenAL()
+AudioBuffer* AudioBuffer::Create_OpenAL()
 {
   return new AudioBuffer_OpenAL();
 }
 
-AudioDevice* CreateAudioDevice_OpenAL()
+AudioDevice* AudioDevice::Create_OpenAL()
 {
   return new AudioDevice_OpenAL();
 }
 
-AudioSource* CreateAudioSource_OpenAL(AudioBuffer* buffer)
+AudioSource* AudioSource::Create_OpenAL(AudioBuffer* buffer)
 {
   return new AudioSource_OpenAL(buffer);
 }

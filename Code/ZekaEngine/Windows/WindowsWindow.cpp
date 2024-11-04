@@ -240,7 +240,7 @@ void WindowsWindow::Show()
   SetFocus(m_hWnd);
 }
 
-Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler)
+Window* Window::Create(const char* name, int width, int height, bool resizable, EventHandler& handler)
 {
   return new WindowsWindow(name, width, height, resizable, handler);
 }

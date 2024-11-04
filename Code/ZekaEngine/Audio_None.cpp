@@ -2,17 +2,17 @@
 
 ZK_NAMESPACE_BEGIN
 
-AudioBuffer* CreateAudioBuffer_None()
+AudioBuffer* AudioBuffer::Create_None()
 {
   return new AudioBuffer_None();
 }
 
-AudioDevice* CreateAudioDevice_None()
+AudioDevice* AudioDevice::Create_None()
 {
   return new AudioDevice_None();
 }
 
-AudioSource* CreateAudioSource_None(AudioBuffer* buffer)
+AudioSource* AudioSource::Create_None(AudioBuffer* buffer)
 {
   return new AudioSource_None(buffer);
 }

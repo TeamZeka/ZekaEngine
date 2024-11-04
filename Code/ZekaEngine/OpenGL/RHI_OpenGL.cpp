@@ -705,7 +705,7 @@ Texture* RenderDevice_OpenGL::CreateTexture(PixelFormat format, uint32 width, ui
   return new Texture_OpenGL(format, width, height, data);
 }
 
-RenderDevice* CreateRenderDevice_OpenGL(GraphicsContext* context)
+RenderDevice* RenderDevice::Create_OpenGL(GraphicsContext* context)
 {
   return new RenderDevice_OpenGL();
 }

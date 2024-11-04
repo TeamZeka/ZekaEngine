@@ -435,18 +435,19 @@ public:
   virtual Shader* CreateShader(const char* source, ShaderType type) = 0;
   virtual Pipeline* CreatePipeline(const PipelineDesc& desc) = 0;
   virtual Texture* CreateTexture(PixelFormat format, uint32 width, uint32 height, const void* data) = 0;
+public:
+  static RenderDevice* Create_OpenGL(GraphicsContext* context);
+  static RenderDevice* Create_None(GraphicsContext* context);
+  static RenderDevice* Create(GraphicsContext* context);
 };
 
-RenderDevice* CreateRenderDevice_OpenGL(GraphicsContext* context);
-RenderDevice* CreateRenderDevice_None(GraphicsContext* context);
-
 inline
-RenderDevice* CreateRenderDevice(GraphicsContext* context)
+RenderDevice* RenderDevice::Create(GraphicsContext* context)
 {
   switch (GraphicsAPI::Get())
   {
-  case GraphicsAPIType::OpenGL: return CreateRenderDevice_OpenGL(context);
-  case GraphicsAPIType::None: return CreateRenderDevice_None(context);
+  case GraphicsAPIType::OpenGL: return RenderDevice::Create_OpenGL(context);
+  case GraphicsAPIType::None: return RenderDevice::Create_None(context);
   }
 
   return nullptr;

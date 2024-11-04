@@ -48,9 +48,9 @@ protected:
   GraphicsContext* m_GraphicsContext;
   bool m_Created = false;
   bool m_IsFullscreen = false;
+public:
+  static Window* Create(const char* name, int width, int height, bool resizable, EventHandler& handler);
 };
-
-Window* NewWindow(const char* name, int width, int height, bool resizable, EventHandler& handler);
 
 ZK_NAMESPACE_END
 

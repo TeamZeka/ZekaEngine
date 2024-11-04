@@ -46,7 +46,7 @@ void Engine::Run()
   Time::Initialize();
 
   const auto appCreateParams = m_Application->GetParams();
-  m_Window = NewWindow(appCreateParams.Name, appCreateParams.Width, appCreateParams.Height, appCreateParams.WindowResizable, m_EventHandler);
+  m_Window = Window::Create(appCreateParams.Name, appCreateParams.Width, appCreateParams.Height, appCreateParams.WindowResizable, m_EventHandler);
   if (m_Window->IsCreated())
   {
     OnWindowCreated();
@@ -67,7 +67,7 @@ void Engine::Run()
 
 void Engine::OnWindowCreated()
 {
-  m_RenderDevice = CreateRenderDevice(m_Window->GetGraphicsContext());
+  m_RenderDevice = RenderDevice::Create(m_Window->GetGraphicsContext());
 
   FontManager::Initialize(m_RenderDevice);
 

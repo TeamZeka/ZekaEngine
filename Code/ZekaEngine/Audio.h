@@ -12,6 +12,10 @@ class AudioDevice
 public:
   AudioDevice() {}
   ~AudioDevice() {}
+public:
+  static AudioDevice* Create_OpenAL();
+  static AudioDevice* Create_None();
+  static AudioDevice* Create();
 };
 
 struct AudioData
@@ -29,6 +33,10 @@ public:
   ~AudioBuffer() {}
 
   virtual void Write(const uint8* bytes, uint32 size, const AudioData& info) = 0;
+public:
+  static AudioBuffer* Create_OpenAL();
+  static AudioBuffer* Create_None();
+  static AudioBuffer* Create();
 };
 
 class AudioSource;
@@ -79,29 +87,28 @@ private:
   AudioState m_State;
   bool m_IsLooping;
   float m_Volume;
+public:
+  static AudioSource* Create_OpenAL(AudioBuffer* buffer);
+  static AudioSource* Create_None(AudioBuffer* buffer);
+  static AudioSource* Create(AudioBuffer* buffer);
 };
 
-AudioDevice* CreateAudioDevice_OpenAL();
-AudioBuffer* CreateAudioBuffer_OpenAL();
-AudioSource* CreateAudioSource_OpenAL(AudioBuffer* buffer);
-
-AudioDevice* CreateAudioDevice_None();
-AudioBuffer* CreateAudioBuffer_None();
-AudioSource* CreateAudioSource_None(AudioBuffer* buffer);
-
-inline AudioDevice* CreateAudioDevice()
+inline 
+AudioDevice* AudioDevice::Create()
 {
-  return CreateAudioDevice_OpenAL();
+  return AudioDevice::Create_OpenAL();
 }
 
-inline AudioBuffer* CreateAudioBuffer()
+inline 
+AudioBuffer* AudioBuffer::Create()
 {
-  return CreateAudioBuffer_OpenAL();
+  return AudioBuffer::Create_OpenAL();
 }
 
-inline AudioSource* CreateAudioSource(AudioBuffer* buffer)
+inline 
+AudioSource* AudioSource::Create(AudioBuffer* buffer)
 {
-  return CreateAudioSource_OpenAL(buffer);
+  return AudioSource::Create_OpenAL(buffer);
 }
 
 ZK_NAMESPACE_END
