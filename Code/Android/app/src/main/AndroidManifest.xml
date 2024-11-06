@@ -10,7 +10,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name="android.app.NativeActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
             android:theme="@style/AppTheme"

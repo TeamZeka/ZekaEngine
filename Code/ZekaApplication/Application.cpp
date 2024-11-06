@@ -24,16 +24,6 @@ public:
 
     m_Texture = ImageTool::ImportTexture("resim.png");
 
-    // AddToShaderQueue("Draw2D_VS.glsl", ShaderType::Vertex);
-    // AddToShaderQueue("Draw2D_Image_FS.glsl", ShaderType::Fragment);
-    // AddToShaderQueue("Draw2D_Color_FS.glsl", ShaderType::Fragment);
-    // AddToShaderQueue("Draw2D_Text_FS.glsl", ShaderType::Fragment);
-    // AddToShaderQueue("Renderer_Line_VS.glsl", ShaderType::Vertex);
-    // AddToShaderQueue("Renderer_Line_FS.glsl", ShaderType::Fragment);
-    // AddToShaderQueue("Renderer_Quad_VS.glsl", ShaderType::Vertex);
-    // AddToShaderQueue("Renderer_Quad_FS.glsl", ShaderType::Fragment);
-    // 
-    // SaveShaderQueue();
 
     File* file = OpenFile("engine_shaders.pak", FileAccess::Read);
     Shader* vs = ShaderTool::ImportShader(file);
@@ -53,7 +43,7 @@ public:
     Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
     m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
     m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
-    
+
     AudioDevice* device = AudioDevice::Create();
     AudioBuffer* buffer = AudioTool::ImportAudio("test1.wav");
     AudioSource* source = AudioSource::Create(buffer);
@@ -66,13 +56,13 @@ public:
 
     const float width = (float)Engine::Get()->GetWindow()->GetWidth();
     const float height = (float)Engine::Get()->GetWindow()->GetHeight();
-    
-    Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
-    m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
-    m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
 
     if (Engine::Get()->GetWindow()->IsCreated())
     {
+      Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
+      m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
+      m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
+
       Engine::Get()->GetRenderDevice()->Clear(ClearFlags::ClearColor | ClearFlags::ClearDepth | ClearFlags::ClearStencil);
       Engine::Get()->GetRenderDevice()->ClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
@@ -94,41 +84,6 @@ private:
   Renderer* m_Renderer;
   Texture* m_Texture;
   Draw2D m_Draw2D;
-
-  struct ShaderSourceInfo
-  {
-    const char* Source;
-    uint32 Size;
-
-    ShaderType Type;
-  };
-  void AddToShaderQueue(const char* filename, ShaderType type)
-  {
-    File* file = OpenFile(filename, FileAccess::Read);
-
-    uint32 size = file->GetSize();
-    char* buffer = new char[size + 1];
-    buffer[size] = 0;
-    file->Read(buffer, size);
-    file->Close();
-    ShaderSourceInfo info;
-    info.Source = (const char*)buffer;
-    info.Size = size;
-    info.Type = type;
-    m_ShaderQueue.push_back(info);
-  }
-
-  void SaveShaderQueue()
-  {
-    File* stream = OpenFile("engine_shaders.pak", FileAccess::Write);
-    for (const auto info : m_ShaderQueue)
-    {
-      ShaderTool::SaveShader(stream, info.Source, info.Size, info.Type);
-    }
-    m_ShaderQueue.clear();
-    stream->Close();
-  }
-  std::vector<ShaderSourceInfo> m_ShaderQueue;
 };
 
 ZK_NAMESPACE_BEGIN
