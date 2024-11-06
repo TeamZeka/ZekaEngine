@@ -262,7 +262,7 @@ int32_t AndroidWindow::HandleInput(AInputEvent* inputEvent)
             OnKeyUp(eventType.EngineKeyCode);
         }
 
-        return 1;
+        return 0;
       }
     } break;
   }
