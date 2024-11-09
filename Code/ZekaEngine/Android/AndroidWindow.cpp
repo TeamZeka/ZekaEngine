@@ -2,6 +2,7 @@
 #include "AndroidEngine.h"
 
 #include "ZekaEngine/Platform.h"
+#include "ZekaEngine/Audio.h"
 
 ZK_NAMESPACE_BEGIN
 
@@ -141,17 +142,28 @@ void AndroidWindow::HandleCmd(int32_t cmd)
 {
   switch (cmd)
   {
+  case APP_CMD_RESUME:
+  {
+    AudioSourceManager::Resume();
+  } break;
+  case APP_CMD_PAUSE:
+  {
+    AudioSourceManager::Pause();
+  } break;
   case APP_CMD_INIT_WINDOW:
   {
-    ANativeWindow_acquire(m_pApp->window);
+    if (m_pApp->window != nullptr)
+    {
+      ANativeWindow_acquire(m_pApp->window);
 
-    m_Width = ANativeWindow_getWidth(m_pApp->window);
-    m_Height = ANativeWindow_getHeight(m_pApp->window);
+      m_Width = ANativeWindow_getWidth(m_pApp->window);
+      m_Height = ANativeWindow_getHeight(m_pApp->window);
 
-    Window::InitializeGraphics();
-    Engine::Get()->OnWindowCreated();
+      Window::InitializeGraphics();
+      Engine::Get()->OnWindowCreated();
 
-    m_Created = true;
+      m_Created = true;
+    }
   } break;
   case APP_CMD_WINDOW_RESIZED:
   {

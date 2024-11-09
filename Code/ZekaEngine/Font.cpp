@@ -85,7 +85,7 @@ FontHinting Font::GetHinting() const
   return m_Options.Hinting;
 }
 
-int32 Font::GetKerning(char prev, char curr)
+int32 Font::GetKerning(int prev, int curr)
 {
   if (m_HasKerning)
   {
@@ -112,7 +112,7 @@ int32 Font::GetKerning(char prev, char curr)
   return 0;
 }
 
-const FontCharacter& Font::GetCharacter(char c)
+const FontCharacter& Font::GetCharacter(int c)
 {
   auto it = m_Characters.find(c);
   if (it == m_Characters.end())
@@ -130,7 +130,7 @@ Texture* Font::GetAtlasTexture(uint32 index)
   return m_AtlasTextures[index];
 }
 
-bool Font::LoadChar(char c, FontCharacter& character)
+bool Font::LoadChar(int c, FontCharacter& character)
 {
   if (!m_Face)
   {
@@ -235,6 +235,36 @@ uint32 Font::SetupTexture(uint32 width, uint32 height, const void* data)
   const uint32 idx = m_AtlasTextures.size();
   m_AtlasTextures.push_back(texture);
   return idx;
+}
+
+float Font::CalculateStringWidth(const std::string& text)
+{
+  float result = 0.0f;
+
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  std::wstring wtext = converter.from_bytes(text);
+
+  int len = wtext.length();
+
+  wchar_t prev = 0;
+  int index = 0;
+  while (index < len)
+  {
+    wchar_t c = wtext[index];
+    if(index > 0) prev = wtext[index - 1];
+    else prev = -1;
+    FontCharacter character = GetCharacter(c);
+    result += GetKerning(c, prev);
+    result += character.AdvanceX;
+    index++;
+  }
+
+  return result;
+}
+
+float Font::CalculateStringHeight(const std::string& text) const
+{
+  return m_Height;
 }
 
 ZK_NAMESPACE_END

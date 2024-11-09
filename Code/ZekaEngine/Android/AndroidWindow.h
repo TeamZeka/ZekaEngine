@@ -26,6 +26,8 @@ public:
   void SetFullscreen(bool fullscreen) override;
 private:
   android_app* m_pApp;
+
+  bool m_IsInitialized = false;
 };
 
 ZK_NAMESPACE_END

@@ -6,6 +6,8 @@
 #include "RHIBase.h"
 
 #include <map>
+#include <codecvt>
+#include <locale>
 
 ZK_NAMESPACE_BEGIN
 
@@ -62,12 +64,14 @@ public:
   bool IsBold() const;
   bool IsItalic() const;
   FontHinting GetHinting() const;
+  float CalculateStringWidth(const std::string& text);
+  float CalculateStringHeight(const std::string& text) const;
 public:
-  int32 GetKerning(char prev, char curr);
-  const FontCharacter& GetCharacter(char c);
+  int32 GetKerning(int prev, int curr);
+  const FontCharacter& GetCharacter(int c);
   Texture* GetAtlasTexture(uint32 index);
 private:
-  bool LoadChar(char c, FontCharacter& character);
+  bool LoadChar(int c, FontCharacter& character);
   void FlushSize() const;
   uint32 SetupTexture(uint32 width, uint32 height, const void* data);
 private:
@@ -80,8 +84,8 @@ private:
   bool m_HasKerning;
   FontOptions m_Options;
 
-  std::map<uint32, int32> m_KerningTable;
-  std::map<char, FontCharacter> m_Characters;
+  std::map<int, int32> m_KerningTable;
+  std::map<int, FontCharacter> m_Characters;
   std::vector<Texture*> m_AtlasTextures;
 };
 

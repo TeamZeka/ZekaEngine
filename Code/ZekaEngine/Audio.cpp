@@ -24,6 +24,22 @@ void AudioSourceManager::Remove(AudioSource* source)
   }
 }
 
+void AudioSourceManager::Pause()
+{
+  for (AudioSource* source : s_Sources)
+  {
+    source->Pause();
+  }
+}
+
+void AudioSourceManager::Resume()
+{
+  for (AudioSource* source : s_Sources)
+  {
+    source->Play();
+  }
+}
+
 void AudioSourceManager::Update()
 {
   for (AudioSource* source : s_Sources)

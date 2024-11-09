@@ -46,6 +46,8 @@ class AudioSourceManager
 public:
   static void Add(AudioSource* source);
   static void Remove(AudioSource* source);
+  static void Pause();
+  static void Resume();
   static void Update();
 private:
   static std::vector<AudioSource*> s_Sources;

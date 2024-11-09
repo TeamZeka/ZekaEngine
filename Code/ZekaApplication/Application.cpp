@@ -24,7 +24,6 @@ public:
 
     m_Texture = ImageTool::ImportTexture("resim.png");
 
-
     File* file = OpenFile("engine_shaders.pak", FileAccess::Read);
     Shader* vs = ShaderTool::ImportShader(file);
     Shader* fs = ShaderTool::ImportShader(file);
@@ -34,6 +33,13 @@ public:
     Shader* fs3 = ShaderTool::ImportShader(file);
     Shader* vs2 = ShaderTool::ImportShader(file);
     Shader* fs4 = ShaderTool::ImportShader(file);
+
+    FontOptions ops;
+    ops.Flags = Font::AntiAliasing;
+    ops.PointSize = 24.0f;
+    ops.Hinting = FontHinting::None;
+    m_Font = FontTool::ImportFont("geo_1.ttf", ops);
+    m_TextHeight = m_Font->CalculateStringWidth("te\nstü");
 
     const float width = (float)Engine::Get()->GetWindow()->GetWidth();
     const float height = (float)Engine::Get()->GetWindow()->GetHeight();
@@ -47,9 +53,11 @@ public:
     AudioDevice* device = AudioDevice::Create();
     AudioBuffer* buffer = AudioTool::ImportAudio("test1.wav");
     AudioSource* source = AudioSource::Create(buffer);
+    source->SetIsLooping(true);
     source->Play();
   }
 
+  float m_TextHeight = 0.0f;
   void OnUpdate(float dt) override
   {
     Application::OnUpdate(dt);
@@ -57,22 +65,20 @@ public:
     const float width = (float)Engine::Get()->GetWindow()->GetWidth();
     const float height = (float)Engine::Get()->GetWindow()->GetHeight();
 
-    if (Engine::Get()->GetWindow()->IsCreated())
-    {
-      Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
-      m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
-      m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
+    Engine::Get()->GetRenderDevice()->SetViewport(0, 0, width, height);
+    m_Renderer->SetDraw2DProjectionMatrix(Matrix4::Orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f));
+    m_Renderer->SetProjectionViewMatrix(Matrix4::Perspective(Math::Radians(60.0f), width / height, 0.01f, 100.0f) * Matrix4::Inverse(Matrix4::Translate({ 0.0f, 0.0f, 10.0f })));
 
-      Engine::Get()->GetRenderDevice()->Clear(ClearFlags::ClearColor | ClearFlags::ClearDepth | ClearFlags::ClearStencil);
-      Engine::Get()->GetRenderDevice()->ClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+    Engine::Get()->GetRenderDevice()->Clear(ClearFlags::ClearColor | ClearFlags::ClearDepth | ClearFlags::ClearStencil);
+    Engine::Get()->GetRenderDevice()->ClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
-      m_Renderer->DrawLine({ 1.0f, 0.0f, 1.0f }, { 4.0f, 4.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
-      m_Renderer->DrawTexture(Matrix4::Translate({ 0.0f, 1.0f, 0.0f }), m_Texture, {1.0f, 1.0f, 1.0f, 1.0f});
-      m_Renderer->Flush();
+    m_Renderer->DrawLine({ 1.0f, 0.0f, 1.0f }, { 4.0f, 4.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
+    m_Renderer->DrawTexture(Matrix4::Translate({ 0.0f, 1.0f, 0.0f }), m_Texture, {1.0f, 1.0f, 1.0f, 1.0f});
+    m_Renderer->Flush();
 
-      m_Draw2D.DrawTexture(Vector2(), { 100.0f, 100.0f }, { 0,0 }, { (float)m_Texture->GetWidth() * 0.5f, (float)m_Texture->GetHeight() * 0.5f }, m_Texture, {1.0f});
-      m_Renderer->FlushDraw2D(m_Draw2D);
-    }
+    m_Draw2D.DrawTexture(Vector2(), { 100.0f, 100.0f }, { 0,0 }, { (float)m_Texture->GetWidth() * 0.5f, (float)m_Texture->GetHeight() * 0.5f }, m_Texture, {1.0f});
+    m_Draw2D.DrawText({ (width - m_TextHeight) * 0.5f, 24.0f}, m_Font, "testü", { 1.0f, 0.0f, 0.0f, 1.0f });
+    m_Renderer->FlushDraw2D(m_Draw2D);
   }
 
   void OnEvent(Event& event) override
@@ -84,6 +90,7 @@ private:
   Renderer* m_Renderer;
   Texture* m_Texture;
   Draw2D m_Draw2D;
+  Font* m_Font;
 };
 
 ZK_NAMESPACE_BEGIN

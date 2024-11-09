@@ -54,13 +54,18 @@ void Engine::Run()
 
   while (!m_Window->DestroyRequested())
   {
+    m_Window->PollEvents();
+    if (!m_Window->IsCreated())
+    {
+      continue;
+    }
+
     m_Timer.Now = Time::Now();
     m_Timer.DeltaTime = float(m_Timer.Now - m_Timer.LastTime);
     m_Timer.LastTime = m_Timer.Now;
 
     m_Application->OnUpdate(m_Timer.DeltaTime);
     AudioSourceManager::Update();
-    m_Window->PollEvents();
     m_Window->PresentGraphics();
   }
 }

@@ -142,11 +142,14 @@ void Draw2D::DrawTexture(const Vector2& pos, const Vector2& size, const Vector2&
 
 void Draw2D::DrawText(const Vector2& pos, Font* font, const std::string& text, const Vector4& color)
 {
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  std::wstring wtext = converter.from_bytes(text);
+
   Vector2 p = pos;
-  char prev = 0;
-  for (const auto c : text)
+  wchar_t prev = 0;
+  for (const wchar_t c : wtext)
   {
-    if (c == '\n')
+    if (c == L'\n')
     {
       p.X = pos.X;
       p.Y += static_cast<float>(font->GetHeight());
